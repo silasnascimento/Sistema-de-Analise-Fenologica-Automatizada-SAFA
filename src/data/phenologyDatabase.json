@@ -1,0 +1,473 @@
+{
+  "culturas": [
+    {
+      "nome": "Soja",
+      "id": "glycine_max",
+      "escala_fenologica": "Fehr & Caviness",
+      "estagios": [
+        {
+          "codigo": "VE - V4",
+          "descricao": "Emergência a 4ª Folha Trifoliolada",
+          "dias_apos_semeadura_inicio": 10,
+          "dias_apos_semeadura_fim": 35,
+          "ndvi_esperado_min": 0.20,
+          "ndvi_esperado_max": 0.40,
+          "notas": "Fortemente influenciado pela cor, umidade e cobertura de palha do solo."
+        },
+        {
+          "codigo": "V5 - V6",
+          "descricao": "5ª a 6ª Folha Trifoliolada",
+          "dias_apos_semeadura_inicio": 35,
+          "dias_apos_semeadura_fim": 50,
+          "ndvi_esperado_min": 0.50,
+          "ndvi_esperado_max": 0.75,
+          "notas": "Rápido aumento do NDVI. Estágio chave para modelos de predição de produtividade."
+        },
+        {
+          "codigo": "R1 - R2",
+          "descricao": "Início a Pleno Florescimento",
+          "dias_apos_semeadura_inicio": 50,
+          "dias_apos_semeadura_fim": 65,
+          "ndvi_esperado_min": 0.75,
+          "ndvi_esperado_max": 0.85,
+          "notas": "Dossel próximo do fechamento. O NDVI continua a aumentar."
+        },
+        {
+          "codigo": "R3 - R5",
+          "descricao": "Formação de Vagens a Início do Enchimento de Grãos",
+          "dias_apos_semeadura_inicio": 65,
+          "dias_apos_semeadura_fim": 90,
+          "ndvi_esperado_min": 0.85,
+          "ndvi_esperado_max": 0.91,
+          "notas": "Pico de IAF e biomassa. O NDVI atinge seu valor máximo e entra em saturação."
+        },
+        {
+          "codigo": "R6",
+          "descricao": "Pleno Enchimento de Grãos",
+          "dias_apos_semeadura_inicio": 90,
+          "dias_apos_semeadura_fim": 110,
+          "ndvi_esperado_min": 0.80,
+          "ndvi_esperado_max": 0.88,
+          "notas": "Início do declínio lento do NDVI à medida que as folhas inferiores começam a senescer."
+        },
+        {
+          "codigo": "R7 - R8",
+          "descricao": "Início da Maturação a Maturação Plena",
+          "dias_apos_semeadura_inicio": 110,
+          "dias_apos_semeadura_fim": 130,
+          "ndvi_esperado_min": 0.40,
+          "ndvi_esperado_max": 0.70,
+          "notas": "Declínio acentuado do NDVI devido à senescência generalizada e queda de folhas."
+        }
+      ]
+    },
+    {
+      "nome": "Milho (1ª Safra)",
+      "id": "zea_mays_primeira_safra",
+      "escala_fenologica": "Ritchie, Hanway & Benson",
+      "estagios": [
+        {
+          "codigo": "VE - V5",
+          "descricao": "Emergência a 5ª Folha",
+          "dias_apos_semeadura_inicio": 10,
+          "dias_apos_semeadura_fim": 30,
+          "ndvi_esperado_min": 0.20,
+          "ndvi_esperado_max": 0.45,
+          "notas": "Influenciado pela cobertura de palha e umidade do solo."
+        },
+        {
+          "codigo": "V6 - V10",
+          "descricao": "6ª a 10ª Folha",
+          "dias_apos_semeadura_inicio": 30,
+          "dias_apos_semeadura_fim": 55,
+          "ndvi_esperado_min": 0.50,
+          "ndvi_esperado_max": 0.80,
+          "notas": "Rápido fechamento do dossel. Sensível à disponibilidade de Nitrogênio."
+        },
+        {
+          "codigo": "VT - R2",
+          "descricao": "Pendoamento a Grão Bolha d'água",
+          "dias_apos_semeadura_inicio": 55,
+          "dias_apos_semeadura_fim": 80,
+          "ndvi_esperado_min": 0.85,
+          "ndvi_esperado_max": 0.95,
+          "notas": "Pico de biomassa e NDVI."
+        },
+        {
+          "codigo": "R3 - R5",
+          "descricao": "Grão Leitoso a Farináceo-duro",
+          "dias_apos_semeadura_inicio": 80,
+          "dias_apos_semeadura_fim": 110,
+          "ndvi_esperado_min": 0.80,
+          "ndvi_esperado_max": 0.90,
+          "notas": "Platô de NDVI elevado, com declínio gradual."
+        },
+        {
+          "codigo": "R6",
+          "descricao": "Maturidade Fisiológica",
+          "dias_apos_semeadura_inicio": 110,
+          "dias_apos_semeadura_fim": 140,
+          "ndvi_esperado_min": 0.40,
+          "ndvi_esperado_max": 0.75,
+          "notas": "Declínio rápido do NDVI devido à senescência da planta."
+        }
+      ]
+    },
+    {
+      "nome": "Milho (Safrinha)",
+      "id": "zea_mays_safrinha",
+      "escala_fenologica": "Ritchie, Hanway & Benson",
+      "estagios": [
+        {
+          "codigo": "VE - V5",
+          "descricao": "Emergência a 5ª Folha",
+          "dias_apos_semeadura_inicio": 10,
+          "dias_apos_semeadura_fim": 30,
+          "ndvi_esperado_min": 0.20,
+          "ndvi_esperado_max": 0.45,
+          "notas": "Influenciado pela cobertura de palha e umidade do solo."
+        },
+        {
+          "codigo": "V6 - V10",
+          "descricao": "6ª a 10ª Folha",
+          "dias_apos_semeadura_inicio": 30,
+          "dias_apos_semeadura_fim": 55,
+          "ndvi_esperado_min": 0.45,
+          "ndvi_esperado_max": 0.75,
+          "notas": "Rápido fechamento do dossel. Sensível à disponibilidade de Nitrogênio."
+        },
+        {
+          "codigo": "VT - R2",
+          "descricao": "Pendoamento a Grão Bolha d'água",
+          "dias_apos_semeadura_inicio": 55,
+          "dias_apos_semeadura_fim": 80,
+          "ndvi_esperado_min": 0.80,
+          "ndvi_esperado_max": 0.90,
+          "notas": "Pico de biomassa e NDVI. A safrinha pode ter um pico ligeiramente menor."
+        },
+        {
+          "codigo": "R3 - R5",
+          "descricao": "Grão Leitoso a Farináceo-duro",
+          "dias_apos_semeadura_inicio": 80,
+          "dias_apos_semeadura_fim": 110,
+          "ndvi_esperado_min": 0.75,
+          "ndvi_esperado_max": 0.85,
+          "notas": "Platô de NDVI elevado, com declínio gradual."
+        },
+        {
+          "codigo": "R6",
+          "descricao": "Maturidade Fisiológica",
+          "dias_apos_semeadura_inicio": 110,
+          "dias_apos_semeadura_fim": 140,
+          "ndvi_esperado_min": 0.40,
+          "ndvi_esperado_max": 0.70,
+          "notas": "Declínio rápido do NDVI devido à senescência da planta."
+        }
+      ]
+    },
+    {
+      "nome": "Trigo",
+      "id": "triticum_aestivum",
+      "escala_fenologica": "Zadoks",
+      "estagios": [
+        {
+          "codigo": "Z10 - Z29",
+          "descricao": "Germinação a Fim do Afilhamento",
+          "dias_apos_semeadura_inicio": 10,
+          "dias_apos_semeadura_fim": 45,
+          "ndvi_esperado_min": 0.25,
+          "ndvi_esperado_max": 0.75,
+          "notas": "Aumenta de um valor baixo (influência do solo) para um valor moderado. Varia entre cultivares."
+        },
+        {
+          "codigo": "Z30 - Z49",
+          "descricao": "Alongamento do Colmo a Emborrachamento",
+          "dias_apos_semeadura_inicio": 45,
+          "dias_apos_semeadura_fim": 60,
+          "ndvi_esperado_min": 0.75,
+          "ndvi_esperado_max": 0.85,
+          "notas": "Aumento rápido do NDVI à medida que o dossel se fecha completamente."
+        },
+        {
+          "codigo": "Z50 - Z71",
+          "descricao": "Espigamento a Início do Grão Leitoso",
+          "dias_apos_semeadura_inicio": 60,
+          "dias_apos_semeadura_fim": 85,
+          "ndvi_esperado_min": 0.80,
+          "ndvi_esperado_max": 0.90,
+          "notas": "Pico de biomassa e NDVI. O índice satura, dificultando a diferenciação de biomassa."
+        },
+        {
+          "codigo": "Z72 - Z87",
+          "descricao": "Grão Leitoso a Pastoso-duro",
+          "dias_apos_semeadura_inicio": 85,
+          "dias_apos_semeadura_fim": 105,
+          "ndvi_esperado_min": 0.70,
+          "ndvi_esperado_max": 0.85,
+          "notas": "Início do declínio do NDVI, mas a planta permanece fotossinteticamente ativa."
+        },
+        {
+          "codigo": "Z91 - Z92",
+          "descricao": "Maturação do Grão",
+          "dias_apos_semeadura_inicio": 105,
+          "dias_apos_semeadura_fim": 130,
+          "ndvi_esperado_min": 0.35,
+          "ndvi_esperado_max": 0.65,
+          "notas": "Declínio acentuado do NDVI devido à senescência da planta e secagem para a colheita."
+        }
+      ]
+    },
+    {
+      "nome": "Arroz Irrigado",
+      "id": "oryza_sativa_irrigado",
+      "escala_fenologica": "Estágios V e R",
+      "estagios": [
+        {
+          "codigo": "VE - V3",
+          "descricao": "Emergência a 3 Folhas",
+          "dias_apos_semeadura_inicio": 10,
+          "dias_apos_semeadura_fim": 30,
+          "ndvi_esperado_min": 0.19,
+          "ndvi_esperado_max": 0.30,
+          "notas": "Pré-inundação. Influência do solo e manejo de plantas daninhas."
+        },
+        {
+          "codigo": "V4",
+          "descricao": "4 Folhas (Início do Afilhamento)",
+          "dias_apos_semeadura_inicio": 30,
+          "dias_apos_semeadura_fim": 45,
+          "ndvi_esperado_min": 0.31,
+          "ndvi_esperado_max": 0.41,
+          "notas": "Coincide com a inundação. O NDVI é baixo devido à mistura espectral com a água."
+        },
+        {
+          "codigo": "R1",
+          "descricao": "Iniciação da Panícula",
+          "dias_apos_semeadura_inicio": 60,
+          "dias_apos_semeadura_fim": 75,
+          "ndvi_esperado_min": 0.73,
+          "ndvi_esperado_max": 0.78,
+          "notas": "Rápido aumento do NDVI à medida que o dossel cobre a superfície da água."
+        },
+        {
+          "codigo": "R2 - R3",
+          "descricao": "Florescimento a Grão Leitoso",
+          "dias_apos_semeadura_inicio": 75,
+          "dias_apos_semeadura_fim": 90,
+          "ndvi_esperado_min": 0.81,
+          "ndvi_esperado_max": 0.84,
+          "notas": "O NDVI continua a aumentar em direção ao seu pico."
+        },
+        {
+          "codigo": "R4",
+          "descricao": "Grão Pastoso",
+          "dias_apos_semeadura_inicio": 90,
+          "dias_apos_semeadura_fim": 105,
+          "ndvi_esperado_min": 0.85,
+          "ndvi_esperado_max": 0.85,
+          "notas": "Pico de biomassa verde e valor máximo de NDVI."
+        },
+        {
+          "codigo": "R8 - R9",
+          "descricao": "Senescência a Maturação Plena",
+          "dias_apos_semeadura_inicio": 115,
+          "dias_apos_semeadura_fim": 130,
+          "ndvi_esperado_min": 0.29,
+          "ndvi_esperado_max": 0.80,
+          "notas": "Declínio acentuado do NDVI à medida que a planta seca para a colheita."
+        }
+      ]
+    },
+    {
+      "nome": "Fumo",
+      "id": "nicotiana_tabacum",
+      "escala_fenologica": "Estágios inferidos (dados hipotéticos)",
+      "estagios": [
+        {
+          "codigo": "Estabelecimento",
+          "descricao": "Mudas recém-transplantadas",
+          "dias_apos_semeadura_inicio": 0,
+          "dias_apos_semeadura_fim": 20,
+          "ndvi_esperado_min": 0.10,
+          "ndvi_esperado_max": 0.30,
+          "notas": "Cobertura do solo mínima; NDVI dominado pelo solo. DADOS HIPOTÉTICOS - necessária validação em campo."
+        },
+        {
+          "codigo": "Crescimento Rápido",
+          "descricao": "Rápida expansão das folhas",
+          "dias_apos_semeadura_inicio": 20,
+          "dias_apos_semeadura_fim": 60,
+          "ndvi_esperado_min": 0.30,
+          "ndvi_esperado_max": 0.85,
+          "notas": "Aumento exponencial do NDVI, característico de culturas de folhas largas. DADOS HIPOTÉTICOS - necessária validação em campo."
+        },
+        {
+          "codigo": "Pico de Biomassa",
+          "descricao": "Antes da primeira colheita",
+          "dias_apos_semeadura_inicio": 60,
+          "dias_apos_semeadura_fim": 75,
+          "ndvi_esperado_min": 0.80,
+          "ndvi_esperado_max": 0.90,
+          "notas": "Dossel completamente fechado; máxima atividade fotossintética. DADOS HIPOTÉTICOS - necessária validação em campo."
+        },
+        {
+          "codigo": "Colheita Escalonada",
+          "descricao": "Remoção sequencial das folhas",
+          "dias_apos_semeadura_inicio": 75,
+          "dias_apos_semeadura_fim": 120,
+          "ndvi_esperado_min": 0.40,
+          "ndvi_esperado_max": 0.85,
+          "notas": "Declínio não linear em degraus. Cada etapa de colheita causa uma queda abrupta no NDVI. DADOS HIPOTÉTICOS - necessária validação em campo."
+        },
+        {
+          "codigo": "Pós-colheita",
+          "descricao": "Apenas caules remanescentes",
+          "dias_apos_semeadura_inicio": 120,
+          "dias_apos_semeadura_fim": 140,
+          "ndvi_esperado_min": 0.15,
+          "ndvi_esperado_max": 0.35,
+          "notas": "Remoção da maior parte da biomassa verde. DADOS HIPOTÉTICOS - necessária validação em campo."
+        }
+      ]
+    },
+    {
+      "nome": "Maçã",
+      "id": "malus_domestica",
+      "escala_fenologica": "Estágios sazonais",
+      "tipo_ciclo": "perene",
+      "estagios": [
+        {
+          "codigo": "Dormência",
+          "descricao": "Inverno, sem folhas",
+          "periodo_mes_inicio": "Junho",
+          "periodo_mes_fim": "Agosto",
+          "ndvi_esperado_min": 0.05,
+          "ndvi_esperado_max": 0.20,
+          "notas": "Influenciado pela vegetação de cobertura entre as fileiras."
+        },
+        {
+          "codigo": "Ponta Prata",
+          "descricao": "Intumescimento das gemas",
+          "periodo_mes_inicio": "Agosto",
+          "periodo_mes_fim": "Agosto",
+          "ndvi_esperado_min": 0.11,
+          "ndvi_esperado_max": 0.11,
+          "notas": "Primeiro sinal de atividade detectável."
+        },
+        {
+          "codigo": "Ponta Verde",
+          "descricao": "Primeiras pontas verdes visíveis",
+          "periodo_mes_inicio": "Agosto",
+          "periodo_mes_fim": "Setembro",
+          "ndvi_esperado_min": 0.09,
+          "ndvi_esperado_max": 0.10,
+          "notas": "Queda sutil e temporária do NDVI pode ocorrer."
+        },
+        {
+          "codigo": "Brotação/Início da Floração",
+          "descricao": "Emergência das folhas e flores",
+          "periodo_mes_inicio": "Setembro",
+          "periodo_mes_fim": "Setembro",
+          "ndvi_esperado_min": 0.11,
+          "ndvi_esperado_max": 0.16,
+          "notas": "Início do aumento consistente do NDVI."
+        },
+        {
+          "codigo": "Queda das Pétalas",
+          "descricao": "Fim da floração, expansão foliar",
+          "periodo_mes_inicio": "Setembro",
+          "periodo_mes_fim": "Outubro",
+          "ndvi_esperado_min": 0.22,
+          "ndvi_esperado_max": 0.22,
+          "notas": "Ponto de inflexão para o rápido aumento do NDVI."
+        },
+        {
+          "codigo": "Dossel Pleno",
+          "descricao": "Verão, dossel completamente formado",
+          "periodo_mes_inicio": "Dezembro",
+          "periodo_mes_fim": "Março",
+          "ndvi_esperado_min": 0.70,
+          "ndvi_esperado_max": 0.85,
+          "notas": "Platô de NDVI elevado. O valor depende da densidade e vigor do pomar."
+        },
+        {
+          "codigo": "Senescência",
+          "descricao": "Queda das folhas",
+          "periodo_mes_inicio": "Abril",
+          "periodo_mes_fim": "Maio",
+          "ndvi_esperado_min": 0.25,
+          "ndvi_esperado_max": 0.70,
+          "notas": "Declínio constante do NDVI à medida que as folhas caem."
+        }
+      ]
+    },
+    {
+      "nome": "Uva",
+      "id": "vitis_vinifera",
+      "escala_fenologica": "BBCH",
+      "tipo_ciclo": "perene",
+      "estagios": [
+        {
+          "codigo": "00 - 15",
+          "descricao": "Dormência a 5 Folhas Desdobradas",
+          "periodo_mes_inicio": "Agosto",
+          "periodo_mes_fim": "Setembro",
+          "ndvi_esperado_min": 0.20,
+          "ndvi_esperado_max": 0.60,
+          "notas": "Aumento rápido do NDVI a partir da brotação."
+        },
+        {
+          "codigo": "53 - 71",
+          "descricao": "Inflorescência Visível a Pegamento do Fruto",
+          "periodo_mes_inicio": "Outubro",
+          "periodo_mes_fim": "Novembro",
+          "ndvi_esperado_min": 0.60,
+          "ndvi_esperado_max": 0.86,
+          "notas": "O NDVI atinge seu valor máximo quando o dossel está mais denso."
+        },
+        {
+          "codigo": "73 - 79",
+          "descricao": "Grão Ervilha a Fechamento do Cacho",
+          "periodo_mes_inicio": "Novembro",
+          "periodo_mes_fim": "Dezembro",
+          "ndvi_esperado_min": 0.70,
+          "ndvi_esperado_max": 0.86,
+          "notas": "Queda no NDVI pode ser observada devido à poda de verão (desponta)."
+        },
+        {
+          "codigo": "81 - 89",
+          "descricao": "Pintor (Veraison) a Maturação Plena",
+          "periodo_mes_inicio": "Janeiro",
+          "periodo_mes_fim": "Março",
+          "ndvi_esperado_min": 0.70,
+          "ndvi_esperado_max": 0.80,
+          "notas": "Platô de NDVI elevado, indicando dossel ativo para a maturação."
+        },
+        {
+          "codigo": "91 - 97",
+          "descricao": "Início da Senescência a Queda das Folhas",
+          "periodo_mes_inicio": "Março",
+          "periodo_mes_fim": "Junho",
+          "ndvi_esperado_min": 0.30,
+          "ndvi_esperado_max": 0.75,
+          "notas": "Declínio constante do NDVI após a colheita."
+        }
+      ]
+    }
+  ],
+  "metadados": {
+    "fonte": "Base de Dados Fenológica e Espectral de Referência para Culturas Agrícolas Chave na Região Sul do Brasil: Uma Síntese para Aplicações com Sentinel-2 e Landsat",
+    "regiao": "Região Sul do Brasil (Paraná, Santa Catarina, Rio Grande do Sul)",
+    "satelites_referencia": ["Sentinel-2", "Landsat"],
+    "resolucao_temporal": "2-3 dias (HLS)",
+    "resolucao_espacial": "30 metros",
+    "data_compilacao": "2025",
+    "observacoes": [
+      "Valores de NDVI podem variar conforme condições climáticas, manejo e cultivares",
+      "Para culturas perenes (maçã e uva), os períodos são baseados em meses do ano",
+      "Para culturas anuais, os períodos são baseados em dias após semeadura/transplante",
+      "Dados do fumo são hipotéticos e necessitam validação em campo",
+      "Recomenda-se uso complementar de EVI e SAVI para análises avançadas quando NDVI satura (>0.85)"
+    ]
+  }
+}
