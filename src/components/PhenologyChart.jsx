@@ -11,7 +11,6 @@ import {
   Legend,
   Filler, // Importante para preencher a área
 } from 'chart.js';
-
 // Registra os componentes necessários do Chart.js
 ChartJS.register(
   CategoryScale,
@@ -23,16 +22,17 @@ ChartJS.register(
   Legend,
   Filler
 );
-
 const PhenologyChart = ({ apiResult, phenologyData }) => {
   if (!apiResult || !phenologyData) return null;
-
   // 1. Extrai os dados que precisamos
-  const labels = Object.keys(apiResult.ndvi).map(key => phenologyData.estagios[parseInt(key.split('_')[1]) - 1].codigo);
+  const labels = Object.keys(apiResult.ndvi).map(key => {
+    const index = parseInt(key.split('_')[1]) - 1;
+    // Adiciona verificação para garantir que o estágio existe antes de acessar 'codigo'
+    return phenologyData.estagios[index] ? phenologyData.estagios[index].codigo : 'N/A';
+  });
   const observedNdvi = Object.values(apiResult.ndvi).map(period => period.ndvi_mean);
   const expectedMinNdvi = phenologyData.estagios.slice(0, labels.length).map(stage => stage.ndvi_esperado_min);
   const expectedMaxNdvi = phenologyData.estagios.slice(0, labels.length).map(stage => stage.ndvi_esperado_max);
-
   // 2. Configura os dados para o gráfico
   const chartData = {
     labels, // Estágios fenológicos no eixo X
@@ -63,7 +63,6 @@ const PhenologyChart = ({ apiResult, phenologyData }) => {
       },
     ],
   };
-
   // 3. Configura as opções visuais do gráfico
   const options = {
     responsive: true,
@@ -94,12 +93,11 @@ const PhenologyChart = ({ apiResult, phenologyData }) => {
       }
     }
   };
-
   return (
     <div className="mt-6 p-4 bg-white rounded-lg shadow">
       <Line options={options} data={chartData} />
     </div>
   );
 };
-
 export default PhenologyChart;
+
