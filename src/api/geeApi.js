@@ -1,8 +1,21 @@
 import axios from 'axios';
 import { calculatePhenologyPeriods } from '../utils/phenologyProcessor';
 
+//const apiClient = axios.create({
+//  baseURL: '/api',
+//  headers: { 'Content-Type': 'application/json' },
+//});
+
+// Define a URL base para a API de forma dinâmica.
+// Em desenvolvimento (npm run dev), usa o proxy local '/api'.
+// Em produção (no GitHub Pages), aponta diretamente para a API real.
+
+const baseURL = import.meta.env.DEV ? '/api' : 'https://map.silasogis.com';
+
+console.log(`Modo: ${import.meta.env.DEV ? 'Desenvolvimento' : 'Produção'}. URL da API: ${baseURL}`);
+
 const apiClient = axios.create({
-  baseURL: '/api',
+  baseURL: baseURL,
   headers: { 'Content-Type': 'application/json' },
 });
 
