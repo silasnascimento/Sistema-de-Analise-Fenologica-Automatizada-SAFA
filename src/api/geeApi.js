@@ -73,3 +73,56 @@ export const fetchAnalysis = async (analysisData) => {
     throw error;
   }
 };
+
+// Nova função para análise avulsa com períodos customizados
+export const fetchCustomAnalysis = async (analysisData) => {
+  const { polygon, formData } = analysisData;
+
+  // Valida se há períodos customizados
+  if (!formData.customPeriods || formData.customPeriods.length === 0) {
+    throw new Error("Nenhum período customizado definido.");
+  }
+
+  // Valida se todos os períodos têm datas de início e fim
+  const validPeriods = formData.customPeriods.filter(p => p.startDate && p.endDate);
+  if (validPeriods.length === 0) {
+    throw new Error("Períodos customizados devem ter datas de início e fim válidas.");
+  }
+
+  // 1. Prepara os corpos das duas requisições
+  const ndviPayload = { "roi": polygon.geometry };
+  validPeriods.forEach((p, i) => {
+    ndviPayload[`start_date_period_${i + 1}`] = p.startDate;
+    ndviPayload[`end_date_period_${i + 1}`] = p.endDate;
+  });
+
+  const centroid = getPolygonCentroid(polygon);
+  const climatePayload = {
+    "point": { "type": "Point", "coordinates": centroid },
+    "date_periods": validPeriods.map(p => [p.startDate, p.endDate]),
+  };
+
+  console.log("Enviando payload NDVI (Custom):", ndviPayload);
+  console.log("Enviando payload Clima (Custom):", climatePayload);
+
+  try {
+    // 2. Cria as duas promessas de requisição
+    const ndviPromise = apiClient.post('/ndvi_composite', ndviPayload);
+    const climatePromise = apiClient.post('/climate_stats', climatePayload);
+
+    // 3. Executa as duas em paralelo e aguarda os resultados
+    const [ndviResponse, climateResponse] = await Promise.all([ndviPromise, climatePromise]);
+
+    const combinedResult = {
+      ndvi: ndviResponse.data,
+      climate: climateResponse.data,
+      customPeriods: validPeriods, // Inclui os períodos customizados no resultado
+    };
+
+    console.log("✅ Sucesso! Resposta Combinada (Custom):", combinedResult);
+    return combinedResult;
+  } catch (error) {
+    console.error("❌ Erro ao chamar a API (Custom):", error.response ? error.response.data : error.message);
+    throw error;
+  }
+};

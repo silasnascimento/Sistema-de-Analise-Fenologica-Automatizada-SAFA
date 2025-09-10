@@ -81,47 +81,77 @@ const DrawHandler = ({ onPolygonCreated, onPolygonEdited, onPolygonDeleted }) =>
   return null;
 };
 
-const Map = ({ onPolygonCreated, onPolygonEdited, onPolygonDeleted, activeTileUrl }) => {
-  const position = [-15.7801, -47.9292];
+// O componente Map agora recebe os resultados da análise
+const Map = ({ onPolygonCreated, onPolygonEdited, onPolygonDeleted, analysisResult, phenologyData, activeTab }) => {
+  const position = [-27.7801, -52.9292];
 
   return (
     <MapContainer center={position} zoom={10} style={{ height: '100%', width: '100%' }}>
+      {/* Controle de Basemaps */}
       <LayersControl position="topright">
         <LayersControl.BaseLayer checked name="Mapa Claro (CartoDB)">
-          <TileLayer
-            url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
-            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
-          />
+          <TileLayer url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png" attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>' />
         </LayersControl.BaseLayer>
         <LayersControl.BaseLayer name="Padrão (OpenStreetMap)">
-          <TileLayer
-            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-          />
+          <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors' />
         </LayersControl.BaseLayer>
         <LayersControl.BaseLayer name="Satélite (Esri)">
-          <TileLayer
-            url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
-            attribution='&copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
-          />
+          <TileLayer url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}" attribution='&copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community' />
         </LayersControl.BaseLayer>
       </LayersControl>
       
-      {activeTileUrl && (
-        <TileLayer
-          key={activeTileUrl}
-          url={activeTileUrl}
-          opacity={0.8}
-          zIndex={10}
-        />
-      )}
-      
-      <DrawHandler 
+      {/* Controle de Camadas NDVI (renderizado condicionalmente) */}
+      {analysisResult && analysisResult.ndvi && (() => {
+        // Tenta diferentes possíveis estruturas de dados para os tiles
+        const tilesData = analysisResult.ndvi.ndvi_tiles || 
+                         analysisResult.ndvi.tiles || 
+                         analysisResult.ndvi.layers;
+        
+        if (!tilesData || Object.keys(tilesData).length === 0) {
+          return null;
+        }
+
+        return (
+          <LayersControl position="topleft">
+            {Object.keys(tilesData).map((periodKey) => {
+              const tileData = tilesData[periodKey];
+              const tileUrl = tileData?.tile_url || tileData?.url || tileData;
+
+              if (!tileUrl || typeof tileUrl !== 'string') return null;
+
+              // Para análise fenológica, usa o nome do estágio
+              // Para análise avulsa, usa "Período X"
+              let layerName;
+              if (activeTab === 'phenological' && phenologyData) {
+                const stageIndex = parseInt(periodKey.split('_')[1]) - 1;
+                layerName = phenologyData.estagios[stageIndex]?.codigo || periodKey;
+              } else {
+                const periodIndex = parseInt(periodKey.split('_')[1]);
+                layerName = `Período ${periodIndex}`;
+              }
+
+              return (
+                <LayersControl.Overlay key={periodKey} name={layerName}>
+                  <TileLayer
+                    url={tileUrl}
+                    opacity={0.8}
+                    zIndex={10}
+                  />
+                </LayersControl.Overlay>
+              );
+            })}
+          </LayersControl>
+        );
+      })()}
+
+      {/* CORREÇÃO: Readicionando os manipuladores de funcionalidade */}
+      <DrawHandler
         onPolygonCreated={onPolygonCreated}
         onPolygonEdited={onPolygonEdited}
         onPolygonDeleted={onPolygonDeleted}
       />
       <GeoSearchHandler />
+
     </MapContainer>
   );
 };

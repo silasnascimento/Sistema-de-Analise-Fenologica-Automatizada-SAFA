@@ -1,12 +1,11 @@
 import { useState } from 'react';
 import './App.css';
 import Map from './components/Map';
-import TabContainer from './components/TabContainer';
+import AnalysisForm from './components/AnalysisForm';
 import PhenologyChart from './components/PhenologyChart';
 import DiagnosticTable from './components/DiagnosticTable';
-import CustomAnalysisResults from './components/CustomAnalysisResults';
 import Spinner from './components/Spinner';
-import { fetchAnalysis, fetchCustomAnalysis } from './api/geeApi';
+import { fetchAnalysis } from './api/geeApi';
 import phenologyDB from './data/phenologyDatabase.json';
 
 const LoadingOverlay = () => (
@@ -22,7 +21,6 @@ function App() {
   const [isLoading, setIsLoading] = useState(false);
   const [analysisResult, setAnalysisResult] = useState(null);
   const [error, setError] = useState(null);
-  const [activeTab, setActiveTab] = useState('phenological');
 
   // 1. O estado 'selectedTilePeriod' foi removido.
 
@@ -46,24 +44,7 @@ function App() {
     }
   };
 
-  const handleGenerateCustomAnalysis = async () => {
-    setAnalysisResult(null);
-    setError(null);
-    setIsLoading(true);
-    try {
-      const analysisData = { polygon: drawnPolygon, formData: formData };
-      const result = await fetchCustomAnalysis(analysisData);
-      setAnalysisResult(result);
-    } catch (err) {
-      setError("Não foi possível gerar a análise avulsa. Verifique os períodos definidos ou tente novamente mais tarde.");
-      console.error(err);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
   const isFormValid = drawnPolygon && formData.plotName && formData.cropType && formData.startDate;
-  const isCustomFormValid = drawnPolygon && formData.customPlotName && formData.customPeriods && formData.customPeriods.length > 0 && formData.customPeriods.every(p => p.startDate && p.endDate);
   const selectedCropData = formData.cropType ? phenologyDB.culturas.find(c => c.id === formData.cropType) : null;
 
   // 2. A lógica 'activeTileUrl' foi removida.
@@ -73,18 +54,11 @@ function App() {
       <div className="relative w-full md:w-1/4 p-4 shadow-lg bg-white overflow-y-auto">
         {isLoading && <LoadingOverlay />}
         <h1 className="text-2xl font-bold mb-4 text-gray-800">SAFA - Diagnóstico Inteligente</h1>
-        <TabContainer formData={formData} setFormData={setFormData} activeTab={activeTab} setActiveTab={setActiveTab} />
+        <AnalysisForm formData={formData} setFormData={setFormData} />
         <div className="mt-6">
-          {activeTab === 'phenological' && (
-            <button onClick={handleGenerateDiagnosis} disabled={!isFormValid || isLoading} className={`w-full text-white font-bold py-2 px-4 rounded transition-colors ${ isFormValid && !isLoading ? 'bg-green-600 hover:bg-green-700' : 'bg-gray-400 cursor-not-allowed'}`}>
-              {isLoading ? 'Processando...' : 'Gerar Diagnóstico Fenológico'}
-            </button>
-          )}
-          {activeTab === 'custom' && (
-            <button onClick={handleGenerateCustomAnalysis} disabled={!isCustomFormValid || isLoading} className={`w-full text-white font-bold py-2 px-4 rounded transition-colors ${ isCustomFormValid && !isLoading ? 'bg-blue-600 hover:bg-blue-700' : 'bg-gray-400 cursor-not-allowed'}`}>
-              {isLoading ? 'Processando...' : 'Gerar Análise Avulsa'}
-            </button>
-          )}
+          <button onClick={handleGenerateDiagnosis} disabled={!isFormValid || isLoading} className={`w-full text-white font-bold py-2 px-4 rounded transition-colors ${ isFormValid && !isLoading ? 'bg-green-600 hover:bg-green-700' : 'bg-gray-400 cursor-not-allowed'}`}>
+            {isLoading ? 'Processando...' : 'Gerar Diagnóstico'}
+          </button>
         </div>
         {error && (
           <div className="mt-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
@@ -92,17 +66,11 @@ function App() {
             <p>{error}</p>
           </div>
         )}
-        {analysisResult && (
+        {analysisResult && selectedCropData && (
           <>
-            {activeTab === 'phenological' && selectedCropData && (
-              <>
-                <DiagnosticTable analysisResult={analysisResult} phenologyData={selectedCropData} />
-                <PhenologyChart apiResult={analysisResult.ndvi} phenologyData={selectedCropData} />
-              </>
-            )}
-            {activeTab === 'custom' && (
-              <CustomAnalysisResults analysisResult={analysisResult} />
-            )}
+            {/* O TileSelector foi removido daqui */}
+            <DiagnosticTable analysisResult={analysisResult} phenologyData={selectedCropData} />
+            <PhenologyChart apiResult={analysisResult.ndvi} phenologyData={selectedCropData} />
           </>
         )}
       </div>
@@ -114,7 +82,6 @@ function App() {
           onPolygonDeleted={handlePolygonDeleted}
           analysisResult={analysisResult}
           phenologyData={selectedCropData}
-          activeTab={activeTab}
         />
       </div>
     </div>
