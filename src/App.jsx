@@ -72,7 +72,7 @@ function App() {
     <div className="flex flex-col md:flex-row h-screen bg-gray-50">
       <div className="relative w-full md:w-1/4 p-4 shadow-lg bg-white overflow-y-auto">
         {isLoading && <LoadingOverlay />}
-        <h1 className="text-2xl font-bold mb-4 text-gray-800">SAFA - Diagnóstico Inteligente</h1>
+        <h1 className="text-2xl font-bold mb-4 text-gray-800">🌱 SAFA - Diagnóstico Inteligente</h1>
         <TabContainer formData={formData} setFormData={setFormData} activeTab={activeTab} setActiveTab={setActiveTab} />
         <div className="mt-6">
           {activeTab === 'phenological' && (

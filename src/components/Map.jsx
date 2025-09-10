@@ -4,6 +4,7 @@ import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 import 'leaflet-draw';
 import { GeoSearchControl, OpenStreetMapProvider } from 'leaflet-geosearch';
+import GEETileLayerWithEvents from './GEETileLayerWithEvents';
 
 // Código de correção do ícone padrão
 let DefaultIcon = L.icon({
@@ -117,6 +118,12 @@ const Map = ({ onPolygonCreated, onPolygonEdited, onPolygonDeleted, analysisResu
               const tileData = tilesData[periodKey];
               const tileUrl = tileData?.tile_url || tileData?.url || tileData;
 
+              console.log(`🔍 Tile Debug - ${periodKey}:`, {
+                tileData,
+                tileUrl,
+                isValid: tileUrl && typeof tileUrl === 'string'
+              });
+
               if (!tileUrl || typeof tileUrl !== 'string') return null;
 
               // Para análise fenológica, usa o nome do estágio
@@ -136,6 +143,26 @@ const Map = ({ onPolygonCreated, onPolygonEdited, onPolygonDeleted, analysisResu
                     url={tileUrl}
                     opacity={0.8}
                     zIndex={10}
+                    attribution="Google Earth Engine"
+                    crossOrigin="anonymous"
+                    maxZoom={18}
+                    minZoom={1}
+                    tileSize={256}
+                    zoomOffset={0}
+                    bounds={[[-90, -180], [90, 180]]}
+                    noWrap={false}
+                    updateWhenZooming={false}
+                    keepBuffer={2}
+                    maxNativeZoom={18}
+                    detectRetina={false}
+                    subdomains={[]}
+                    errorTileUrl=""
+                  />
+                  <GEETileLayerWithEvents
+                    url={tileUrl}
+                    opacity={0.8}
+                    zIndex={10}
+                    name={layerName}
                   />
                 </LayersControl.Overlay>
               );
