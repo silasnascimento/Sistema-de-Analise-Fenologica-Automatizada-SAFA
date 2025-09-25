@@ -73,6 +73,8 @@ function App() {
       <div className="relative w-full md:w-1/4 p-4 shadow-lg bg-white overflow-y-auto">
         {isLoading && <LoadingOverlay />}
         <h1 className="text-2xl font-bold mb-4 text-gray-800">🌱 SAFA - Diagnóstico Inteligente</h1>
+        <h2 className="text-sm mb-2 text-gray-600">Sistema de Análise Fenolóigco Automatizado</h2>
+        <h2 className="text-sm mb-4 text-gray-600">Desenvolvido por <a href="https://silasogis.com" target="_blank" className="text-blue-600 underline">Silas Oliveira</a></h2>
         <TabContainer formData={formData} setFormData={setFormData} activeTab={activeTab} setActiveTab={setActiveTab} />
         <div className="mt-6">
           {activeTab === 'phenological' && (
