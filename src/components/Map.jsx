@@ -4,7 +4,7 @@ import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 import 'leaflet-draw';
 import { GeoSearchControl, OpenStreetMapProvider } from 'leaflet-geosearch';
-import GEETileLayerWithEvents from './GEETileLayerWithEvents';
+// Removido: eventos serão ligados via props do TileLayer
 
 // Código de correção do ícone padrão
 let DefaultIcon = L.icon({
@@ -85,10 +85,37 @@ const DrawHandler = ({ onPolygonCreated, onPolygonEdited, onPolygonDeleted }) =>
 // O componente Map agora recebe os resultados da análise
 const Map = ({ onPolygonCreated, onPolygonEdited, onPolygonDeleted, analysisResult, phenologyData, activeTab }) => {
   const position = [-27.7801, -52.9292];
+  
+  // Normaliza diferentes formatos de tiles vindos da API
+  const getTilesData = () => {
+    if (!analysisResult || !analysisResult.ndvi) return null;
+    return (
+      analysisResult.ndvi.ndvi_tiles ||
+      analysisResult.ndvi.tiles ||
+      analysisResult.ndvi.layers ||
+      null
+    );
+  };
+
+  const buildTileUrl = (tileData) => {
+    // Casos suportados:
+    // 1) string URL direta
+    if (typeof tileData === 'string') return tileData;
+    if (!tileData || typeof tileData !== 'object') return null;
+    // 2) campo tile_url ou url
+    if (tileData.tile_url) return tileData.tile_url;
+    if (tileData.url) return tileData.url;
+    // 3) mapId/token (ou variantes de capitalização)
+    const mapId = tileData.mapId || tileData.mapid || tileData.map_id || tileData.mapid_value;
+    const token = tileData.token || tileData.accessToken || tileData.mapToken;
+    if (mapId && token) {
+      return `https://earthengine.googleapis.com/map/${mapId}/{z}/{x}/{y}?token=${token}`;
+    }
+    return null;
+  };
 
   return (
     <MapContainer center={position} zoom={10} style={{ height: '100%', width: '100%' }}>
-      {/* Controle de Basemaps */}
       <LayersControl position="topright">
         <LayersControl.BaseLayer checked name="Mapa Claro (CartoDB)">
           <TileLayer url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png" attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>' />
@@ -99,79 +126,65 @@ const Map = ({ onPolygonCreated, onPolygonEdited, onPolygonDeleted, analysisResu
         <LayersControl.BaseLayer name="Satélite (Esri)">
           <TileLayer url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}" attribution='&copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community' />
         </LayersControl.BaseLayer>
+
+        {(() => {
+          const tilesData = getTilesData();
+          if (!tilesData || Object.keys(tilesData).length === 0) return null;
+          return Object.keys(tilesData).map((periodKey) => {
+            const tileData = tilesData[periodKey];
+            const tileUrl = buildTileUrl(tileData);
+
+            console.log(`🔍 Tile Debug - ${periodKey}:`, {
+              tileData,
+              tileUrl,
+              isValid: !!tileUrl,
+            });
+
+            if (!tileUrl) return null;
+
+            let layerName;
+            if (activeTab === 'phenological' && phenologyData) {
+              const stageIndex = Math.max(0, (parseInt((periodKey || '').split('_')[1], 10) || 1) - 1);
+              layerName = phenologyData.estagios?.[stageIndex]?.codigo || periodKey;
+            } else {
+              const periodIndex = parseInt((periodKey || '').split('_')[1], 10) || 1;
+              layerName = `Período ${periodIndex}`;
+            }
+
+            return (
+              <LayersControl.Overlay key={periodKey} name={layerName}>
+                <TileLayer
+                  url={tileUrl}
+                  opacity={0.8}
+                  zIndex={10}
+                  attribution="Google Earth Engine"
+                  crossOrigin="anonymous"
+                  maxZoom={18}
+                  minZoom={1}
+                  tileSize={256}
+                  zoomOffset={0}
+                  bounds={[[-90, -180], [90, 180]]}
+                  noWrap={false}
+                  updateWhenZooming={false}
+                  keepBuffer={2}
+                  maxNativeZoom={18}
+                  detectRetina={false}
+                  subdomains={[]}
+                  errorTileUrl=""
+                  eventHandlers={{
+                    loading: () => console.log(`🔄 Loading tiles for ${layerName}`),
+                    load: () => console.log(`✅ Tiles loaded successfully for ${layerName}`),
+                    tileerror: (e) => console.error(`❌ Tile error for ${layerName}:`, e),
+                    tileload: (e) => console.log(`📦 Tile loaded for ${layerName}:`, e?.tile?.src),
+                    tileloadstart: (e) => console.log(`🚀 Starting to load tile for ${layerName}:`, e?.tile?.src),
+                  }}
+                />
+              </LayersControl.Overlay>
+            );
+          });
+        })()}
       </LayersControl>
-      
-      {/* Controle de Camadas NDVI (renderizado condicionalmente) */}
-      {analysisResult && analysisResult.ndvi && (() => {
-        // Tenta diferentes possíveis estruturas de dados para os tiles
-        const tilesData = analysisResult.ndvi.ndvi_tiles || 
-                         analysisResult.ndvi.tiles || 
-                         analysisResult.ndvi.layers;
-        
-        if (!tilesData || Object.keys(tilesData).length === 0) {
-          return null;
-        }
 
-        return (
-          <LayersControl position="topleft">
-            {Object.keys(tilesData).map((periodKey) => {
-              const tileData = tilesData[periodKey];
-              const tileUrl = tileData?.tile_url || tileData?.url || tileData;
-
-              console.log(`🔍 Tile Debug - ${periodKey}:`, {
-                tileData,
-                tileUrl,
-                isValid: tileUrl && typeof tileUrl === 'string'
-              });
-
-              if (!tileUrl || typeof tileUrl !== 'string') return null;
-
-              // Para análise fenológica, usa o nome do estágio
-              // Para análise avulsa, usa "Período X"
-              let layerName;
-              if (activeTab === 'phenological' && phenologyData) {
-                const stageIndex = parseInt(periodKey.split('_')[1]) - 1;
-                layerName = phenologyData.estagios[stageIndex]?.codigo || periodKey;
-              } else {
-                const periodIndex = parseInt(periodKey.split('_')[1]);
-                layerName = `Período ${periodIndex}`;
-              }
-
-              return (
-                <LayersControl.Overlay key={periodKey} name={layerName}>
-                  <TileLayer
-                    url={tileUrl}
-                    opacity={0.8}
-                    zIndex={10}
-                    attribution="Google Earth Engine"
-                    crossOrigin="anonymous"
-                    maxZoom={18}
-                    minZoom={1}
-                    tileSize={256}
-                    zoomOffset={0}
-                    bounds={[[-90, -180], [90, 180]]}
-                    noWrap={false}
-                    updateWhenZooming={false}
-                    keepBuffer={2}
-                    maxNativeZoom={18}
-                    detectRetina={false}
-                    subdomains={[]}
-                    errorTileUrl=""
-                  />
-                  <GEETileLayerWithEvents
-                    url={tileUrl}
-                    opacity={0.8}
-                    zIndex={10}
-                    name={layerName}
-                  />
-                </LayersControl.Overlay>
-              );
-            })}
-          </LayersControl>
-        );
-      })()}
-
-      {/* CORREÇÃO: Readicionando os manipuladores de funcionalidade */}
       <DrawHandler
         onPolygonCreated={onPolygonCreated}
         onPolygonEdited={onPolygonEdited}
