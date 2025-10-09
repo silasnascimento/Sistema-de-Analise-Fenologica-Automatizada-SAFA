@@ -14,7 +14,7 @@ const AnalysisForm = ({ formData, setFormData }) => {
   };
 
   return (
-    <form className="space-y-4">
+    <form className="space-y-4 max-w-md">
       <div>
         <label htmlFor="plotName" className="block text-sm font-medium text-slate-300">
           Nome do Talhão
@@ -30,39 +30,40 @@ const AnalysisForm = ({ formData, setFormData }) => {
         />
       </div>
 
-      <div>
-        <label htmlFor="cropType" className="block text-sm font-medium text-slate-300">
-          Cultura
-        </label>
-        <select
-          id="cropType"
-          name="cropType"
-          value={formData.cropType}
-          onChange={handleChange}
-          className="mt-1 block w-full p-2 rounded-md bg-slate-800 border border-slate-700 text-slate-100 focus:ring-2 focus:ring-blue-600 focus:border-blue-600"
-        >
-          <option value="">Selecione uma cultura</option>
-          {/* 2. Mapeia a lista de culturas do JSON para criar as opções do menu */}
-          {phenologyDB.culturas.map((cultura) => (
-            <option key={cultura.id} value={cultura.id}>
-              {cultura.nome}
-            </option>
-          ))}
-        </select>
-      </div>
-
-      <div>
-        <label htmlFor="startDate" className="block text-sm font-medium text-slate-300">
-          Data de Início do Plantio
-        </label>
-        <input
-          type="date"
-          id="startDate"
-          name="startDate"
-          value={formData.startDate}
-          onChange={handleChange}
-          className="mt-1 block w-full p-2 rounded-md bg-slate-800 border border-slate-700 text-slate-100 focus:ring-2 focus:ring-blue-600 focus:border-blue-600"
-        />
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <div>
+          <label htmlFor="cropType" className="block text-sm font-medium text-slate-300">
+            Cultura
+          </label>
+          <select
+            id="cropType"
+            name="cropType"
+            value={formData.cropType}
+            onChange={handleChange}
+            className="mt-1 block w-full p-2 rounded-md bg-slate-800 border border-slate-700 text-slate-100 focus:ring-2 focus:ring-blue-600 focus:border-blue-600"
+          >
+            <option value="">Selecione uma cultura</option>
+            {/* 2. Mapeia a lista de culturas do JSON para criar as opções do menu */}
+            {phenologyDB.culturas.map((cultura) => (
+              <option key={cultura.id} value={cultura.id}>
+                {cultura.nome}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div>
+          <label htmlFor="startDate" className="block text-sm font-medium text-slate-300">
+            Data de Início do Plantio
+          </label>
+          <input
+            type="date"
+            id="startDate"
+            name="startDate"
+            value={formData.startDate}
+            onChange={handleChange}
+            className="mt-1 block w-full p-2 rounded-md bg-slate-800 border border-slate-700 text-slate-100 focus:ring-2 focus:ring-blue-600 focus:border-blue-600"
+          />
+        </div>
       </div>
     </form>
   );

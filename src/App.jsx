@@ -70,62 +70,63 @@ function App() {
 
   return (
     <div className="flex flex-col md:flex-row h-screen bg-slate-950 text-slate-100">
-      <div className="relative w-full md:w-1/4 p-4 md:p-6 bg-slate-900/80 backdrop-blur border-r border-slate-800 overflow-y-auto">
+      <div className="relative order-2 md:order-1 w-full md:w-[380px] lg:w-[420px] xl:w-[460px] p-4 md:p-6 bg-slate-900/80 backdrop-blur border-t md:border-t-0 md:border-r border-slate-800 overflow-y-auto">
         {isLoading && <LoadingOverlay />}
         <h1 className="text-2xl font-bold mb-1 text-slate-100">🌱 SAFA - Diagnóstico Inteligente</h1>
         <h2 className="text-sm mb-1 text-slate-400">Sistema de Análise Fenolóigco Automatizado</h2>
         <h2 className="text-xs mb-4 text-slate-500">Desenvolvido por <a href="https://silasogis.com" target="_blank" className="text-blue-400 underline hover:text-blue-300">Silas Oliveira</a></h2>
-
-        {/* API Key */}
-        <div className="mb-4">
-          <label htmlFor="apiKey" className="block text-xs font-medium text-slate-400 mb-1">API Key <span className="text-slate-500">(obrigatória)</span></label>
-          <input
-            type="password"
-            id="apiKey"
-            name="apiKey"
-            value={formData.apiKey}
-            onChange={(e) => setFormData(prev => ({ ...prev, apiKey: e.target.value }))}
-            placeholder="Insira sua chave da API"
-            className="block w-full rounded-md bg-slate-800 border border-slate-700 px-3 py-2 text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600"
-          />
-          {!formData.apiKey && (
-            <p className="mt-1 text-[11px] text-slate-500">Necessária para executar as análises.</p>
-          )}
-        </div>
-        <TabContainer formData={formData} setFormData={setFormData} activeTab={activeTab} setActiveTab={setActiveTab} />
-        <div className="mt-6">
-          {activeTab === 'phenological' && (
-            <button onClick={handleGenerateDiagnosis} disabled={!isFormValid || isLoading} className={`w-full text-white font-bold py-2 px-4 rounded transition-colors ${ isFormValid && !isLoading ? 'bg-indigo-600 hover:bg-indigo-700' : 'bg-slate-700 cursor-not-allowed'}`}>
-              {isLoading ? 'Processando...' : 'Gerar Diagnóstico Fenológico'}
-            </button>
-          )}
-          {activeTab === 'custom' && (
-            <button onClick={handleGenerateCustomAnalysis} disabled={!isCustomFormValid || isLoading} className={`w-full text-white font-bold py-2 px-4 rounded transition-colors ${ isCustomFormValid && !isLoading ? 'bg-blue-600 hover:bg-blue-700' : 'bg-slate-700 cursor-not-allowed'}`}>
-              {isLoading ? 'Processando...' : 'Gerar Análise Avulsa'}
-            </button>
-          )}
-        </div>
-        {error && (
-          <div className="mt-4 p-3 bg-red-950 border border-red-800 text-red-300 rounded">
-            <p className="font-bold text-red-200">Ocorreu um Erro</p>
-            <p>{error}</p>
+        <div className="max-w-md w-full mx-auto">
+          {/* API Key */}
+          <div className="mb-4">
+            <label htmlFor="apiKey" className="block text-xs font-medium text-slate-400 mb-1">API Key <span className="text-slate-500">(obrigatória)</span></label>
+            <input
+              type="password"
+              id="apiKey"
+              name="apiKey"
+              value={formData.apiKey}
+              onChange={(e) => setFormData(prev => ({ ...prev, apiKey: e.target.value }))}
+              placeholder="Insira sua chave da API"
+              className="block w-full rounded-md bg-slate-800 border border-slate-700 px-3 py-2 text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600"
+            />
+            {!formData.apiKey && (
+              <p className="mt-1 text-[11px] text-slate-500">Necessária para executar as análises.</p>
+            )}
           </div>
-        )}
-        {analysisResult && (
-          <>
-            {activeTab === 'phenological' && selectedCropData && (
-              <>
-                <DiagnosticTable analysisResult={analysisResult} phenologyData={selectedCropData} />
-                <PhenologyChart apiResult={analysisResult.ndvi} phenologyData={selectedCropData} />
-              </>
+          <TabContainer formData={formData} setFormData={setFormData} activeTab={activeTab} setActiveTab={setActiveTab} />
+          <div className="mt-6">
+            {activeTab === 'phenological' && (
+              <button onClick={handleGenerateDiagnosis} disabled={!isFormValid || isLoading} className={`w-full text-white font-bold py-2 px-4 rounded transition-colors ${ isFormValid && !isLoading ? 'bg-indigo-600 hover:bg-indigo-700' : 'bg-slate-700 cursor-not-allowed'}`}>
+                {isLoading ? 'Processando...' : 'Gerar Diagnóstico Fenológico'}
+              </button>
             )}
             {activeTab === 'custom' && (
-              <CustomAnalysisResults analysisResult={analysisResult} />
+              <button onClick={handleGenerateCustomAnalysis} disabled={!isCustomFormValid || isLoading} className={`w-full text-white font-bold py-2 px-4 rounded transition-colors ${ isCustomFormValid && !isLoading ? 'bg-blue-600 hover:bg-blue-700' : 'bg-slate-700 cursor-not-allowed'}`}>
+                {isLoading ? 'Processando...' : 'Gerar Análise Avulsa'}
+              </button>
             )}
-          </>
-        )}
+          </div>
+          {error && (
+            <div className="mt-4 p-3 bg-red-950 border border-red-800 text-red-300 rounded">
+              <p className="font-bold text-red-200">Ocorreu um Erro</p>
+              <p>{error}</p>
+            </div>
+          )}
+          {analysisResult && (
+            <>
+              {activeTab === 'phenological' && selectedCropData && (
+                <>
+                  <DiagnosticTable analysisResult={analysisResult} phenologyData={selectedCropData} />
+                  <PhenologyChart apiResult={analysisResult.ndvi} phenologyData={selectedCropData} />
+                </>
+              )}
+              {activeTab === 'custom' && (
+                <CustomAnalysisResults analysisResult={analysisResult} />
+              )}
+            </>
+          )}
+        </div>
       </div>
-      <div className="w-full h-[50vh] md:h-full md:w-3/4">
+      <div className="order-1 md:order-2 min-w-0 w-full h-[62vh] md:h-full md:flex-1">
         {/* 3. Passa os resultados da análise para o componente Map */}
         <Map
           onPolygonCreated={handlePolygonCreated}

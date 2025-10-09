@@ -103,7 +103,9 @@ const PhenologyChart = ({ apiResult, phenologyData }) => {
   };
   return (
     <div className="mt-6 p-4 bg-slate-900 rounded-lg shadow border border-slate-800">
-      <Line options={options} data={chartData} />
+      <div className="max-h-[320px] overflow-auto">
+        <Line options={options} data={chartData} />
+      </div>
     </div>
   );
 };
