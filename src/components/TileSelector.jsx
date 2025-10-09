@@ -14,14 +14,14 @@ const TileSelector = ({ analysisResult, phenologyData, selectedTilePeriod, setSe
 
   return (
     <div className="mt-6">
-      <label htmlFor="tile-selector" className="block text-sm font-medium text-gray-700">
+      <label htmlFor="tile-selector" className="block text-sm font-medium text-slate-300">
         Visualizar NDVI no Mapa:
       </label>
       <select
         id="tile-selector"
         value={selectedTilePeriod || ''}
         onChange={handleSelectionChange}
-        className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
+        className="mt-1 block w-full p-2 rounded-md bg-slate-800 border border-slate-700 text-slate-100 focus:ring-2 focus:ring-blue-600 focus:border-blue-600"
       >
         <option value="">-- Selecione um período --</option>
         {tilePeriods.map(periodKey => {

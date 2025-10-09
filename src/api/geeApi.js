@@ -33,6 +33,8 @@ const getPolygonCentroid = (polygon) => {
 
 export const fetchAnalysis = async (analysisData) => {
   const { polygon, formData } = analysisData;
+  const apiKey = formData?.apiKey;
+  if (!apiKey) throw new Error("API key obrigatória.");
 
   const periods = calculatePhenologyPeriods(formData.cropType, formData.startDate);
   if (periods.length === 0) throw new Error("Nenhum período fenológico encontrado.");
@@ -55,8 +57,9 @@ export const fetchAnalysis = async (analysisData) => {
 
   try {
     // 2. Cria as duas promessas de requisição
-    const ndviPromise = apiClient.post('/ndvi_composite', ndviPayload);
-    const climatePromise = apiClient.post('/climate_stats', climatePayload);
+    const requestConfig = { headers: { 'x-api-key': apiKey } };
+    const ndviPromise = apiClient.post('/ndvi_composite', ndviPayload, requestConfig);
+    const climatePromise = apiClient.post('/climate_stats', climatePayload, requestConfig);
 
     // 3. Executa as duas em paralelo e aguarda os resultados
     const [ndviResponse, climateResponse] = await Promise.all([ndviPromise, climatePromise]);
@@ -77,6 +80,8 @@ export const fetchAnalysis = async (analysisData) => {
 // Nova função para análise avulsa com períodos customizados
 export const fetchCustomAnalysis = async (analysisData) => {
   const { polygon, formData } = analysisData;
+  const apiKey = formData?.apiKey;
+  if (!apiKey) throw new Error("API key obrigatória.");
 
   // Valida se há períodos customizados
   if (!formData.customPeriods || formData.customPeriods.length === 0) {
@@ -107,8 +112,9 @@ export const fetchCustomAnalysis = async (analysisData) => {
 
   try {
     // 2. Cria as duas promessas de requisição
-    const ndviPromise = apiClient.post('/ndvi_composite', ndviPayload);
-    const climatePromise = apiClient.post('/climate_stats', climatePayload);
+    const requestConfig = { headers: { 'x-api-key': apiKey } };
+    const ndviPromise = apiClient.post('/ndvi_composite', ndviPayload, requestConfig);
+    const climatePromise = apiClient.post('/climate_stats', climatePayload, requestConfig);
 
     // 3. Executa as duas em paralelo e aguarda os resultados
     const [ndviResponse, climateResponse] = await Promise.all([ndviPromise, climatePromise]);

@@ -41,7 +41,7 @@ const CustomAnalysisForm = ({ formData, setFormData }) => {
   return (
     <form className="space-y-4">
       <div>
-        <label htmlFor="customPlotName" className="block text-sm font-medium text-gray-700">
+        <label htmlFor="customPlotName" className="block text-sm font-medium text-slate-300">
           Nome do Talhão
         </label>
         <input
@@ -50,24 +50,24 @@ const CustomAnalysisForm = ({ formData, setFormData }) => {
           name="customPlotName"
           value={formData.customPlotName || ''}
           onChange={handleChange}
-          className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
+          className="mt-1 block w-full p-2 rounded-md bg-slate-800 border border-slate-700 text-slate-100 placeholder-slate-500 focus:ring-2 focus:ring-blue-600 focus:border-blue-600"
           placeholder="Ex: Talhão Experimental 1"
         />
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">
+        <label className="block text-sm font-medium text-slate-300 mb-2">
           Períodos de Análise
         </label>
         {periods.map((period, index) => (
-          <div key={index} className="border border-gray-200 rounded-md p-3 mb-3 bg-gray-50">
+          <div key={index} className="border border-slate-700 rounded-md p-3 mb-3 bg-slate-800">
             <div className="flex justify-between items-center mb-2">
-              <span className="text-sm font-medium text-gray-600">Período {index + 1}</span>
+              <span className="text-sm font-medium text-slate-300">Período {index + 1}</span>
               {periods.length > 1 && (
                 <button
                   type="button"
                   onClick={() => removePeriod(index)}
-                  className="text-red-600 hover:text-red-800 text-sm"
+                  className="text-red-400 hover:text-red-300 text-sm"
                 >
                   Remover
                 </button>
@@ -75,25 +75,25 @@ const CustomAnalysisForm = ({ formData, setFormData }) => {
             </div>
             <div className="grid grid-cols-2 gap-2">
               <div>
-                <label className="block text-xs font-medium text-gray-600">
+                <label className="block text-xs font-medium text-slate-400">
                   Data de Início
                 </label>
                 <input
                   type="date"
                   value={period.startDate}
                   onChange={(e) => handlePeriodChange(index, 'startDate', e.target.value)}
-                  className="mt-1 block w-full p-2 text-sm border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
+                  className="mt-1 block w-full p-2 text-sm rounded-md bg-slate-900 border border-slate-700 text-slate-100 focus:ring-2 focus:ring-blue-600 focus:border-blue-600"
                 />
               </div>
               <div>
-                <label className="block text-xs font-medium text-gray-600">
+                <label className="block text-xs font-medium text-slate-400">
                   Data de Fim
                 </label>
                 <input
                   type="date"
                   value={period.endDate}
                   onChange={(e) => handlePeriodChange(index, 'endDate', e.target.value)}
-                  className="mt-1 block w-full p-2 text-sm border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
+                  className="mt-1 block w-full p-2 text-sm rounded-md bg-slate-900 border border-slate-700 text-slate-100 focus:ring-2 focus:ring-blue-600 focus:border-blue-600"
                 />
               </div>
             </div>
@@ -103,7 +103,7 @@ const CustomAnalysisForm = ({ formData, setFormData }) => {
         <button
           type="button"
           onClick={addPeriod}
-          className="w-full py-2 px-4 border border-dashed border-gray-300 rounded-md text-sm text-gray-600 hover:border-gray-400 hover:text-gray-700 transition-colors"
+          className="w-full py-2 px-4 border border-dashed border-slate-600 rounded-md text-sm text-slate-300 hover:border-slate-500 hover:text-slate-200 transition-colors"
         >
           + Adicionar Período
         </button>
