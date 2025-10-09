@@ -39,7 +39,7 @@ const CustomAnalysisForm = ({ formData, setFormData }) => {
   };
 
   return (
-    <form className="space-y-4">
+    <form className="space-y-4 max-w-md">
       <div>
         <label htmlFor="customPlotName" className="block text-sm font-medium text-slate-300">
           Nome do Talhão
@@ -73,7 +73,7 @@ const CustomAnalysisForm = ({ formData, setFormData }) => {
                 </button>
               )}
             </div>
-            <div className="grid grid-cols-2 gap-2">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
               <div>
                 <label className="block text-xs font-medium text-slate-400">
                   Data de Início

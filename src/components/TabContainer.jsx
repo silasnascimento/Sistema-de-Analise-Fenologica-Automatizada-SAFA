@@ -12,7 +12,7 @@ const TabContainer = ({ formData, setFormData, activeTab, setActiveTab }) => {
   return (
     <div className="w-full">
       {/* Tab Navigation */}
-      <div className="flex border-b border-slate-800 mb-4">
+      <div className="flex border-b border-slate-800 mb-4 sticky top-0 bg-slate-900/80 backdrop-blur z-10">
         {tabs.map((tab) => (
           <button
             key={tab.id}
