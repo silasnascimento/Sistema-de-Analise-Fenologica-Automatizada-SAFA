@@ -16,7 +16,7 @@ const AnalysisForm = ({ formData, setFormData }) => {
   return (
     <form className="space-y-4">
       <div>
-        <label htmlFor="plotName" className="block text-sm font-medium text-gray-700">
+        <label htmlFor="plotName" className="block text-sm font-medium text-slate-300">
           Nome do Talhão
         </label>
         <input
@@ -25,13 +25,13 @@ const AnalysisForm = ({ formData, setFormData }) => {
           name="plotName"
           value={formData.plotName}
           onChange={handleChange}
-          className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
+          className="mt-1 block w-full p-2 rounded-md bg-slate-800 border border-slate-700 text-slate-100 placeholder-slate-500 focus:ring-2 focus:ring-blue-600 focus:border-blue-600"
           placeholder="Ex: Talhão Sede 1"
         />
       </div>
 
       <div>
-        <label htmlFor="cropType" className="block text-sm font-medium text-gray-700">
+        <label htmlFor="cropType" className="block text-sm font-medium text-slate-300">
           Cultura
         </label>
         <select
@@ -39,7 +39,7 @@ const AnalysisForm = ({ formData, setFormData }) => {
           name="cropType"
           value={formData.cropType}
           onChange={handleChange}
-          className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
+          className="mt-1 block w-full p-2 rounded-md bg-slate-800 border border-slate-700 text-slate-100 focus:ring-2 focus:ring-blue-600 focus:border-blue-600"
         >
           <option value="">Selecione uma cultura</option>
           {/* 2. Mapeia a lista de culturas do JSON para criar as opções do menu */}
@@ -52,7 +52,7 @@ const AnalysisForm = ({ formData, setFormData }) => {
       </div>
 
       <div>
-        <label htmlFor="startDate" className="block text-sm font-medium text-gray-700">
+        <label htmlFor="startDate" className="block text-sm font-medium text-slate-300">
           Data de Início do Plantio
         </label>
         <input
@@ -61,7 +61,7 @@ const AnalysisForm = ({ formData, setFormData }) => {
           name="startDate"
           value={formData.startDate}
           onChange={handleChange}
-          className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
+          className="mt-1 block w-full p-2 rounded-md bg-slate-800 border border-slate-700 text-slate-100 focus:ring-2 focus:ring-blue-600 focus:border-blue-600"
         />
       </div>
     </form>
