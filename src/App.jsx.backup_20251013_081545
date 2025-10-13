@@ -78,35 +78,35 @@ function App() {
   const selectedCropData = formData.cropType ? phenologyDB.culturas.find(c => c.id === formData.cropType) : null;
 
   return (
-    <div className="app-container">
+    <div className="min-h-screen bg-gradient-to-br from-slate-100 to-slate-200 text-gray-800 flex flex-col lg:flex-row">
       {/* Left Sidebar */}
-      <div className="sidebar">
+      <div className="w-full lg:w-96 bg-white shadow-lg lg:border-r border-b lg:border-b-0 border-gray-200 flex flex-col lg:h-screen">
         {/* Header Section */}
-        <div className="sidebar-header">
-          <div className="header-content">
-            <div className="logo">
-              <span className="logo-icon">🌱</span>
+        <div className="p-6 border-b border-gray-200">
+          <div className="flex items-center space-x-3 mb-4">
+            <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
+              <span className="text-white text-lg">🌱</span>
             </div>
-            <div className="title-section">
-              <h1 className="main-title">🌱 SAFA</h1>
-              <h2 className="subtitle">Diagnóstico Inteligente</h2>
+            <div>
+              <h1 className="text-xl font-bold text-gray-900"> 🌱 SAFA</h1>
+              <h2 className="text-sm font-bold text-gray-900">Diagnóstico Inteligente</h2>
             </div>
           </div>
-          <p className="description">Sistema de Análise Fenológico Automatizado</p>
-          <p className="author">Desenvolvido por <a href="https://silasogis.com" target="_blank">Silas Oliveira</a></p>
+          <p className="text-xs text-gray-500 mb-1">Sistema de Análise Fenológico Automatizado</p>
+          <p className="text-xs text-gray-400">Desenvolvido por <a href="https://silasogis.com" target="_blank" className="text-blue-600 hover:text-blue-800">Silas Oliveira</a></p>
         </div>
 
         {/* Form Section */}
-        <div className="sidebar-content">
+        <div className="flex-1 p-6 overflow-y-auto relative">
           {isLoading && <LoadingOverlay />}
           
           {/* Form Icon */}
           <FormIcon />
           
           {/* API Key */}
-          <div className="form-group">
-            <label htmlFor="apiKey" className="form-label">
-              API Key <span className="required">*</span>
+          <div className="mb-4">
+            <label htmlFor="apiKey" className="block text-sm font-medium text-gray-700 mb-2">
+              API Key <span className="text-red-500">*</span>
             </label>
             <input
               type="password"
@@ -115,21 +115,25 @@ function App() {
               value={formData.apiKey}
               onChange={(e) => setFormData(prev => ({ ...prev, apiKey: e.target.value }))}
               placeholder="Insira sua chave da API"
-              className="form-input"
+              className="block w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             />
             {!formData.apiKey && (
-              <p className="form-help">Necessária para executar as análises.</p>
+              <p className="mt-1 text-xs text-gray-500">Necessária para executar as análises.</p>
             )}
           </div>
 
           <TabContainer formData={formData} setFormData={setFormData} activeTab={activeTab} setActiveTab={setActiveTab} />
           
-          <div className="button-section">
+          <div className="mt-6">
             {activeTab === 'phenological' && (
               <button 
                 onClick={handleGenerateDiagnosis} 
                 disabled={!isFormValid || isLoading} 
-                className={`action-button ${isFormValid && !isLoading ? 'primary' : 'disabled'}`}
+                className={`w-full text-white font-semibold py-3 px-4 rounded-lg transition-colors ${
+                  isFormValid && !isLoading 
+                    ? 'bg-indigo-600 hover:bg-indigo-700 shadow-md hover:shadow-lg' 
+                    : 'bg-gray-400 cursor-not-allowed'
+                }`}
               >
                 {isLoading ? 'Processando...' : 'Gerar Diagnóstico Fenológico'}
               </button>
@@ -138,7 +142,11 @@ function App() {
               <button 
                 onClick={handleGenerateCustomAnalysis} 
                 disabled={!isCustomFormValid || isLoading} 
-                className={`action-button ${isCustomFormValid && !isLoading ? 'secondary' : 'disabled'}`}
+                className={`w-full text-white font-semibold py-3 px-4 rounded-lg transition-colors ${
+                  isCustomFormValid && !isLoading 
+                    ? 'bg-blue-600 hover:bg-blue-700 shadow-md hover:shadow-lg' 
+                    : 'bg-gray-400 cursor-not-allowed'
+                }`}
               >
                 {isLoading ? 'Processando...' : 'Gerar Análise Avulsa'}
               </button>
@@ -146,21 +154,21 @@ function App() {
           </div>
 
           {error && (
-            <div className="error-message">
-              <p className="error-title">Ocorreu um Erro</p>
-              <p className="error-text">{error}</p>
+            <div className="mt-4 p-4 bg-red-50 border border-red-200 text-red-700 rounded-lg">
+              <p className="font-semibold text-red-800">Ocorreu um Erro</p>
+              <p className="text-sm">{error}</p>
             </div>
           )}
 
           {/* Results Section in Sidebar */}
           {analysisResult && (
-            <div className="results-section">
+            <div className="mt-6 space-y-6">
               {/* Phenology Chart */}
               {activeTab === 'phenological' && selectedCropData && (
-                <div className="result-card">
-                  <h3 className="result-title">Curva de Vida da Lavoura</h3>
-                  <p className="result-subtitle">NDVI Observado vs. Esperado</p>
-                  <div className="chart-container">
+                <div className="bg-gray-50 rounded-lg p-4">
+                  <h3 className="text-sm font-semibold text-gray-800 mb-2">Curva de Vida da Lavoura</h3>
+                  <p className="text-xs text-gray-600 mb-3">NDVI Observado vs. Esperado</p>
+                  <div className="h-48">
                     <PhenologyChart apiResult={analysisResult.ndvi} phenologyData={selectedCropData} />
                   </div>
                 </div>
@@ -168,15 +176,15 @@ function App() {
 
               {/* Diagnostic Table */}
               {activeTab === 'phenological' && selectedCropData && (
-                <div className="result-card">
-                  <h3 className="result-title">Tabela de Diagnóstico</h3>
+                <div className="bg-gray-50 rounded-lg p-4">
+                  <h3 className="text-sm font-semibold text-gray-800 mb-3">Tabela de Diagnóstico</h3>
                   <DiagnosticTable analysisResult={analysisResult} phenologyData={selectedCropData} />
                 </div>
               )}
 
               {/* Custom Analysis Results */}
               {activeTab === 'custom' && (
-                <div className="result-card">
+                <div className="bg-gray-50 rounded-lg p-4">
                   <CustomAnalysisResults analysisResult={analysisResult} />
                 </div>
               )}
@@ -186,14 +194,14 @@ function App() {
       </div>
 
       {/* Right Side - Map */}
-      <div className="map-section">
+      <div className="flex-1 flex flex-col lg:h-screen">
         {/* Map Header */}
-        <div className="map-header">
-          <h4 className="map-title">Mapa interativo</h4>
+        <div className="bg-white shadow-sm border-b border-gray-200 px-6 py-4">
+          <h3 className="text-xl font-semibold text-gray-800">Mapa interativo para criar o limite da sua área</h3>
         </div>
         
         {/* Map Container */}
-        <div className="map-container">
+        <div className="flex-1 h-96 lg:h-auto">
           <Map
             onPolygonCreated={handlePolygonCreated}
             onPolygonEdited={handlePolygonEdited}

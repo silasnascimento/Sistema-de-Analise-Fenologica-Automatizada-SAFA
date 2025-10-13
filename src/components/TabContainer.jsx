@@ -10,20 +10,16 @@ const TabContainer = ({ formData, setFormData, activeTab, setActiveTab }) => {
   ];
 
   return (
-    <div className="w-full">
+    <div className="tab-container">
       {/* Tab Navigation */}
-      <div className="flex border-b border-slate-800 mb-4 sticky top-0 bg-slate-900/80 backdrop-blur z-10">
+      <div className="tab-navigation">
         {tabs.map((tab) => (
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id)}
-            className={`flex-1 py-2 px-3 text-sm font-medium text-center border-b-2 transition-colors ${
-              activeTab === tab.id
-                ? 'border-blue-500 text-blue-400 bg-slate-900'
-                : 'border-transparent text-slate-400 hover:text-slate-200 hover:border-slate-700'
-            }`}
+            className={`tab-button ${activeTab === tab.id ? 'active' : ''}`}
           >
-            <span className="mr-1">{tab.icon}</span>
+            <span className="tab-icon">{tab.icon}</span>
             {tab.label}
           </button>
         ))}
@@ -33,10 +29,8 @@ const TabContainer = ({ formData, setFormData, activeTab, setActiveTab }) => {
       <div className="tab-content">
         {activeTab === 'phenological' && (
           <div>
-            <div className="mb-3">
-              <p className="text-xs text-slate-400">
-                Análise baseada em estágios fenológicos específicos da cultura selecionada
-              </p>
+            <div className="tab-description">
+              <p>Análise baseada em estágios fenológicos específicos da cultura selecionada</p>
             </div>
             <AnalysisForm formData={formData} setFormData={setFormData} />
           </div>
@@ -44,10 +38,8 @@ const TabContainer = ({ formData, setFormData, activeTab, setActiveTab }) => {
         
         {activeTab === 'custom' && (
           <div>
-            <div className="mb-3">
-              <p className="text-xs text-slate-400">
-                Análise personalizada com períodos definidos manualmente
-              </p>
+            <div className="tab-description">
+              <p>Análise personalizada com períodos definidos manualmente</p>
             </div>
             <CustomAnalysisForm formData={formData} setFormData={setFormData} />
           </div>

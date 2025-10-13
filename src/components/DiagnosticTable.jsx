@@ -19,20 +19,19 @@ const DiagnosticTable = ({ analysisResult, phenologyData }) => {
   const periods = Object.keys(analysisResult.ndvi.ndvi);
   const stagesToRender = phenologyData.estagios.slice(0, periods.length);
   return (
-    <div className="mt-6">
-      <h3 className="text-lg font-semibold text-slate-200">Tabela de Diagnóstico</h3>
-      <div className="overflow-x-auto mt-2">
-        <table className="min-w-full bg-slate-900 border border-slate-800">
-          <thead className="bg-slate-800/80">
+    <div>
+      <div className="overflow-x-auto">
+        <table className="min-w-full bg-white border border-gray-200 rounded-lg text-xs">
+          <thead className="bg-gray-50">
             <tr>
-              <th className="px-4 py-2 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">Estágio</th>
-              <th className="px-4 py-2 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">NDVI Observado</th>
-              <th className="px-4 py-2 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">NDVI Esperado</th>
-              <th className="px-4 py-2 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">Status</th>
-              <th className="px-4 py-2 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">Clima (Temp/Chuva)</th>
+              <th className="px-2 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Estágio</th>
+              <th className="px-2 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">NDVI Obs.</th>
+              <th className="px-2 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">NDVI Esp.</th>
+              <th className="px-2 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+              <th className="px-2 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Clima</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-slate-800">
+          <tbody className="divide-y divide-gray-200">
             {stagesToRender.map((stageData, index) => {
               const periodKey = `period_${index + 1}`;
               
@@ -45,23 +44,23 @@ const DiagnosticTable = ({ analysisResult, phenologyData }) => {
               const expectedMax = stageData?.ndvi_esperado_max;
               const status = getNdviStatus(observedNdvi, expectedMin, expectedMax);
               return (
-                <tr key={periodKey}>
-                  <td className="px-4 py-3 whitespace-nowrap text-sm text-slate-200">{stageData?.codigo || 'N/A'}</td>
-                  <td className="px-4 py-3 whitespace-nowrap text-sm text-slate-300 font-semibold">
+                <tr key={periodKey} className="hover:bg-gray-50">
+                  <td className="px-2 py-2 whitespace-nowrap text-xs text-gray-900 font-medium">{stageData?.codigo || 'N/A'}</td>
+                  <td className="px-2 py-2 whitespace-nowrap text-xs text-gray-900 font-semibold">
                     {observedNdvi !== undefined ? observedNdvi.toFixed(2) : 'N/D'}
                   </td>
-                  <td className="px-4 py-3 whitespace-nowrap text-sm text-slate-400">
+                  <td className="px-2 py-2 whitespace-nowrap text-xs text-gray-600">
                     {(expectedMin !== undefined && expectedMax !== undefined)
-                      ? `${expectedMin.toFixed(2)} - ${expectedMax.toFixed(2)}`
+                      ? `${expectedMin.toFixed(2)}-${expectedMax.toFixed(2)}`
                       : 'N/A'
                     }
                   </td>
-                  <td className="px-4 py-3 whitespace-nowrap">
-                    <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${status.className}`}>
+                  <td className="px-2 py-2 whitespace-nowrap">
+                    <span className={`px-2 py-1 inline-flex text-xs leading-4 font-semibold rounded-full ${status.className}`}>
                       {status.text}
                     </span>
                   </td>
-                  <td className="px-4 py-3 whitespace-nowrap text-sm text-slate-400">
+                  <td className="px-2 py-2 whitespace-nowrap text-xs text-gray-600">
                     {/* CORREÇÃO FINAL: Verifica as propriedades dentro dos objetos de clima */}
                     {(tempData?.temperature_mean_celsius !== undefined && tempData.temperature_mean_celsius !== null && precipData?.precipitation_sum !== undefined && precipData.precipitation_sum !== null)
                       ? `${tempData.temperature_mean_celsius.toFixed(1)}°C / ${precipData.precipitation_sum.toFixed(1)}mm`

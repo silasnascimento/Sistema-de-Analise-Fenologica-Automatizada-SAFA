@@ -69,13 +69,10 @@ const PhenologyChart = ({ apiResult, phenologyData }) => {
     plugins: {
       legend: {
         position: 'top',
-        labels: { color: '#cbd5e1' },
+        labels: { color: '#374151' },
       },
       title: {
-        display: true,
-        text: 'Curva de Vida da Lavoura: NDVI Observado vs. Esperado',
-        font: { size: 16 },
-        color: '#e2e8f0'
+        display: false
       },
     },
     scales: {
@@ -85,27 +82,25 @@ const PhenologyChart = ({ apiResult, phenologyData }) => {
         title: {
           display: true,
           text: 'Valor do NDVI',
-          color: '#cbd5e1'
+          color: '#6b7280'
         },
-        ticks: { color: '#cbd5e1' },
-        grid: { color: 'rgba(148,163,184,0.2)', borderColor: 'rgba(148,163,184,0.3)' }
+        ticks: { color: '#6b7280' },
+        grid: { color: 'rgba(107,114,128,0.2)', borderColor: 'rgba(107,114,128,0.3)' }
       },
       x: {
         title: {
           display: true,
           text: 'Estágio Fenológico',
-          color: '#cbd5e1'
+          color: '#6b7280'
         },
-        ticks: { color: '#cbd5e1' },
-        grid: { color: 'rgba(148,163,184,0.15)', borderColor: 'rgba(148,163,184,0.3)' }
+        ticks: { color: '#6b7280' },
+        grid: { color: 'rgba(107,114,128,0.15)', borderColor: 'rgba(107,114,128,0.3)' }
       }
     }
   };
   return (
-    <div className="mt-6 p-4 bg-slate-900 rounded-lg shadow border border-slate-800">
-      <div className="max-h-[320px] overflow-auto">
-        <Line options={options} data={chartData} />
-      </div>
+    <div className="h-full">
+      <Line options={options} data={chartData} />
     </div>
   );
 };
