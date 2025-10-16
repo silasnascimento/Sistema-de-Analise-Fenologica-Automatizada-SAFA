@@ -142,11 +142,7 @@ const Map = ({ onPolygonCreated, onPolygonEdited, onPolygonDeleted, analysisResu
             const tileData = tilesData[periodKey];
             const tileUrl = buildTileUrl(tileData);
 
-            console.log(`🔍 Tile Debug - ${periodKey}:`, {
-              tileData,
-              tileUrl,
-              isValid: !!tileUrl,
-            });
+            // Console.log removido para melhor performance
 
             if (!tileUrl) return null;
 
@@ -180,11 +176,9 @@ const Map = ({ onPolygonCreated, onPolygonEdited, onPolygonDeleted, analysisResu
                   subdomains={[]}
                   errorTileUrl=""
                   eventHandlers={{
-                    loading: () => console.log(`🔄 Loading tiles for ${layerName}`),
-                    load: () => console.log(`✅ Tiles loaded successfully for ${layerName}`),
+                    // Logs removidos para melhor performance
+                    // Descomente apenas se precisar debugar
                     tileerror: (e) => console.error(`❌ Tile error for ${layerName}:`, e),
-                    tileload: (e) => console.log(`📦 Tile loaded for ${layerName}:`, e?.tile?.src),
-                    tileloadstart: (e) => console.log(`🚀 Starting to load tile for ${layerName}:`, e?.tile?.src),
                   }}
                 />
               </LayersControl.Overlay>
