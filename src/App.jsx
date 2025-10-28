@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import './App.css';
 import Map from './components/Map';
 import TabContainer from './components/TabContainer';
@@ -37,9 +37,9 @@ function App() {
   const [error, setError] = useState(null);
   const [activeTab, setActiveTab] = useState('phenological');
 
-  const handlePolygonCreated = (geoJson) => setDrawnPolygon(geoJson);
-  const handlePolygonEdited = (geoJson) => setDrawnPolygon(geoJson);
-  const handlePolygonDeleted = () => setDrawnPolygon(null);
+  const handlePolygonCreated = useCallback((geoJson) => setDrawnPolygon(geoJson), []);
+  const handlePolygonEdited = useCallback((geoJson) => setDrawnPolygon(geoJson), []);
+  const handlePolygonDeleted = useCallback(() => setDrawnPolygon(null), []);
 
   const handleGenerateDiagnosis = async () => {
     setAnalysisResult(null);
