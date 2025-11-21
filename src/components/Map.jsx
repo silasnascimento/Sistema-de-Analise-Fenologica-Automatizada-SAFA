@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useMemo, useRef, memo } from 'react';
 import { MapContainer, TileLayer, LayersControl, useMap } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
@@ -36,10 +36,19 @@ const GeoSearchHandler = () => {
   return null;
 };
 
-// Componente interno para o controle de desenho
+// Componente interno para o controle de desenho (handlers estáveis)
 const DrawHandler = ({ onPolygonCreated, onPolygonEdited, onPolygonDeleted }) => {
   const map = useMap();
   const drawnItemsRef = useRef(new L.FeatureGroup());
+
+  // Mantém referências estáveis para os callbacks
+  const createdRef = useRef(onPolygonCreated);
+  const editedRef = useRef(onPolygonEdited);
+  const deletedRef = useRef(onPolygonDeleted);
+
+  useEffect(() => { createdRef.current = onPolygonCreated; }, [onPolygonCreated]);
+  useEffect(() => { editedRef.current = onPolygonEdited; }, [onPolygonEdited]);
+  useEffect(() => { deletedRef.current = onPolygonDeleted; }, [onPolygonDeleted]);
 
   useEffect(() => {
     map.addLayer(drawnItemsRef.current);
@@ -73,13 +82,19 @@ const DrawHandler = ({ onPolygonCreated, onPolygonEdited, onPolygonDeleted }) =>
     const handleCreated = (e) => {
       const layer = e.layer;
       drawnItemsRef.current.addLayer(layer);
-      onPolygonCreated(layer.toGeoJSON());
+      createdRef.current?.(layer.toGeoJSON());
     };
+
     const handleEdited = (e) => {
       const layers = e.layers.getLayers();
-      if (layers.length > 0) onPolygonEdited(layers[0].toGeoJSON());
+      if (layers.length > 0) {
+        editedRef.current?.(layers[0].toGeoJSON());
+      }
     };
-    const handleDeleted = () => onPolygonDeleted();
+
+    const handleDeleted = () => {
+      deletedRef.current?.();
+    };
 
     map.on(L.Draw.Event.CREATED, handleCreated);
     map.on(L.Draw.Event.EDITED, handleEdited);
@@ -91,17 +106,17 @@ const DrawHandler = ({ onPolygonCreated, onPolygonEdited, onPolygonDeleted }) =>
       map.off(L.Draw.Event.DELETED, handleDeleted);
       map.removeControl(drawControl);
     };
-  }, [map, onPolygonCreated, onPolygonEdited, onPolygonDeleted]);
+  }, [map]);
 
   return null;
 };
 
 // O componente Map agora recebe os resultados da análise
-const Map = React.memo(({ onPolygonCreated, onPolygonEdited, onPolygonDeleted, analysisResult, phenologyData, activeTab }) => {
+const MapComponent = ({ onPolygonCreated, onPolygonEdited, onPolygonDeleted, analysisResult, phenologyData, activeTab }) => {
   const position = [-27.7801, -52.9292];
-
+  const canvasRenderer = useMemo(() => L.canvas(), []);
   // Normaliza diferentes formatos de tiles vindos da API
-  const getTilesData = () => {
+  const tilesData = useMemo(() => {
     if (!analysisResult || !analysisResult.ndvi) return null;
     return (
       analysisResult.ndvi.ndvi_tiles ||
@@ -109,7 +124,7 @@ const Map = React.memo(({ onPolygonCreated, onPolygonEdited, onPolygonDeleted, a
       analysisResult.ndvi.layers ||
       null
     );
-  };
+  }, [analysisResult]);
 
   const buildTileUrl = (tileData) => {
     // Casos suportados:
@@ -128,97 +143,92 @@ const Map = React.memo(({ onPolygonCreated, onPolygonEdited, onPolygonDeleted, a
     return null;
   };
 
+  const geeOverlays = useMemo(() => {
+    if (!tilesData || Object.keys(tilesData).length === 0) return null;
+    return Object.keys(tilesData).map((periodKey) => {
+      const tileData = tilesData[periodKey];
+      const tileUrl = buildTileUrl(tileData);
+      if (!tileUrl) return null;
+
+      let layerName;
+      if (activeTab === 'phenological' && phenologyData) {
+        const stageIndex = Math.max(0, (parseInt((periodKey || '').split('_')[1], 10) || 1) - 1);
+        layerName = phenologyData.estagios?.[stageIndex]?.codigo || periodKey;
+      } else {
+        const periodIndex = parseInt((periodKey || '').split('_')[1], 10) || 1;
+        layerName = `Período ${periodIndex}`;
+      }
+
+      return (
+        <LayersControl.Overlay key={periodKey} name={layerName}>
+          <TileLayer
+            url={tileUrl}
+            opacity={0.8}
+            zIndex={10}
+            attribution="Google Earth Engine"
+            crossOrigin="anonymous"
+            maxZoom={18}
+            minZoom={1}
+            tileSize={256}
+            zoomOffset={0}
+            updateWhenZooming={false}
+            updateWhenIdle={true}
+            keepBuffer={1}
+            maxNativeZoom={18}
+            detectRetina={false}
+          />
+        </LayersControl.Overlay>
+      );
+    });
+  }, [tilesData, activeTab, phenologyData]);
+
   return (
     <MapContainer
       center={position}
       zoom={10}
       style={{ height: '100%', width: '100%' }}
       className="h-full w-full"
-      zoomAnimation={true}
-      zoomAnimationThreshold={4}
-      fadeAnimation={true}
-      markerZoomAnimation={true}
       preferCanvas={true}
+      renderer={canvasRenderer}
+      updateWhenIdle={true}
+      wheelDebounceTime={30}
+      wheelPxPerZoomLevel={80}
+      zoomAnimation={true}
+      markerZoomAnimation={true}
+      zoomAnimationThreshold={4}
+      inertia={true}
     >
       <LayersControl position="topright">
-        <LayersControl.BaseLayer name="Mapa Escuro (CartoDB)">
+        <LayersControl.BaseLayer checked name="Mapa Escuro (CartoDB)">
           <TileLayer
             url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
-            updateWhenZooming={false}
-            keepBuffer={2}
+            updateWhenIdle={true}
           />
         </LayersControl.BaseLayer>
         <LayersControl.BaseLayer name="Mapa Claro (CartoDB)">
           <TileLayer
             url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
-            updateWhenZooming={false}
-            keepBuffer={2}
+            updateWhenIdle={true}
           />
         </LayersControl.BaseLayer>
-        <LayersControl.BaseLayer checked name="Padrão (OpenStreetMap)">
+        <LayersControl.BaseLayer name="Padrão (OpenStreetMap)">
           <TileLayer
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-            updateWhenZooming={false}
-            keepBuffer={2}
+            updateWhenIdle={true}
           />
         </LayersControl.BaseLayer>
         <LayersControl.BaseLayer name="Satélite (Esri)">
           <TileLayer
             url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
             attribution='&copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
-            updateWhenZooming={false}
-            keepBuffer={2}
+            updateWhenIdle={true}
           />
         </LayersControl.BaseLayer>
 
-        {(() => {
-          const tilesData = getTilesData();
-          if (!tilesData || Object.keys(tilesData).length === 0) return null;
-          return Object.keys(tilesData).map((periodKey) => {
-            const tileData = tilesData[periodKey];
-            const tileUrl = buildTileUrl(tileData);
-
-            // Console.log removido para melhor performance
-
-            if (!tileUrl) return null;
-
-            let layerName;
-            if (activeTab === 'phenological' && phenologyData) {
-              const stageIndex = Math.max(0, (parseInt((periodKey || '').split('_')[1], 10) || 1) - 1);
-              layerName = phenologyData.estagios?.[stageIndex]?.codigo || periodKey;
-            } else {
-              const periodIndex = parseInt((periodKey || '').split('_')[1], 10) || 1;
-              layerName = `Período ${periodIndex}`;
-            }
-
-            return (
-              <LayersControl.Overlay key={periodKey} name={layerName}>
-                <TileLayer
-                  url={tileUrl}
-                  opacity={0.8}
-                  zIndex={10}
-                  attribution="Google Earth Engine"
-                  crossOrigin="anonymous"
-                  maxZoom={18}
-                  minZoom={1}
-                  tileSize={256}
-                  zoomOffset={0}
-                  bounds={[[-90, -180], [90, 180]]}
-                  noWrap={false}
-                  updateWhenZooming={false}
-                  keepBuffer={2}
-                  maxNativeZoom={18}
-                  detectRetina={false}
-                  subdomains={[]}
-                  errorTileUrl=""
-                />
-              </LayersControl.Overlay>
-            );
-          });
-        })()}
+        {geeOverlays}
       </LayersControl>
 
       <DrawHandler
@@ -230,6 +240,6 @@ const Map = React.memo(({ onPolygonCreated, onPolygonEdited, onPolygonDeleted, a
 
     </MapContainer>
   );
-});
+};
 
-export default Map;
+export default memo(MapComponent);

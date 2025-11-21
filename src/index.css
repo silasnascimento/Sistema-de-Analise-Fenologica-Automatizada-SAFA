@@ -1,3 +1,12 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Performance tweaks for Leaflet */
+.leaflet-pane, .leaflet-layer, .leaflet-tile, .leaflet-marker-icon, .leaflet-marker-shadow {
+  will-change: transform;
+}
+
+.leaflet-container {
+  backface-visibility: hidden;
+}
