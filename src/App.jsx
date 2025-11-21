@@ -1,31 +1,17 @@
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import './App.css';
 import Map from './components/Map';
-import TabContainer from './components/TabContainer';
-import PhenologyChart from './components/PhenologyChart';
-import DiagnosticTable from './components/DiagnosticTable';
+import ControlPanel from './components/ControlPanel';
+import DiagnosticDashboard from './components/DiagnosticDashboard';
 import CustomAnalysisResults from './components/CustomAnalysisResults';
 import Spinner from './components/Spinner';
 import { fetchAnalysis, fetchCustomAnalysis } from './api/geeApi';
 import phenologyDB from './data/phenologyDatabase.json';
 
 const LoadingOverlay = () => (
-  <div className="absolute inset-0 bg-slate-900/80 flex flex-col justify-center items-center z-20 text-slate-200">
-    <Spinner />
-    <p className="mt-4 text-slate-300 font-semibold">Processando diagnóstico...</p>
-  </div>
-);
-
-// Novo componente para o ícone do formulário
-const FormIcon = () => (
-  <div className="mx-auto mb-4 w-24 h-28 bg-gray-50 rounded-lg shadow-sm flex flex-col items-center justify-center border border-gray-200">
-    <div className="text-lg font-bold text-gray-700 mb-3">Formulário de dados da sua área de análise</div>
-    <div className="space-y-1.5 w-16">
-      {[...Array(4)].map((_, i) => (
-        <div key={i} className="h-1.5 bg-gray-300 rounded w-full"></div>
-      ))}
-      <div className="h-1.5 bg-gray-300 rounded w-8"></div>
-    </div>
+  <div className="absolute inset-0 bg-slate-900/80 flex flex-col justify-center items-center z-[2000] text-slate-200 backdrop-blur-sm">
+    <Spinner size="lg" />
+    <p className="mt-4 text-slate-300 font-semibold text-lg animate-pulse">Processando diagnóstico...</p>
   </div>
 );
 
@@ -37,9 +23,10 @@ function App() {
   const [error, setError] = useState(null);
   const [activeTab, setActiveTab] = useState('phenological');
 
-  const handlePolygonCreated = (geoJson) => setDrawnPolygon(geoJson);
-  const handlePolygonEdited = (geoJson) => setDrawnPolygon(geoJson);
-  const handlePolygonDeleted = () => setDrawnPolygon(null);
+  // Memoizar callbacks para evitar re-renderizações desnecessárias do Map
+  const handlePolygonCreated = useCallback((geoJson) => setDrawnPolygon(geoJson), []);
+  const handlePolygonEdited = useCallback((geoJson) => setDrawnPolygon(geoJson), []);
+  const handlePolygonDeleted = useCallback(() => setDrawnPolygon(null), []);
 
   const handleGenerateDiagnosis = async () => {
     setAnalysisResult(null);
@@ -79,120 +66,12 @@ function App() {
 
   return (
     <div className="app-container">
-      {/* Left Sidebar */}
-      <div className="sidebar">
-        {/* Header Section */}
-        <div className="sidebar-header">
-          <div className="header-content">
-            <div className="logo">
-              <span className="logo-icon">🌱</span>
-            </div>
-            <div className="title-section">
-              <h1 className="main-title">🌱 SAFA</h1>
-              <h2 className="subtitle">Diagnóstico Inteligente</h2>
-            </div>
-          </div>
-          <p className="description">Sistema de Análise Fenológico Automatizado</p>
-          <p className="author">Desenvolvido por <a href="https://silasogis.com" target="_blank">Silas Oliveira</a></p>
-        </div>
 
-        {/* Form Section */}
-        <div className="sidebar-content">
-          {isLoading && <LoadingOverlay />}
-          
-          {/* Form Icon */}
-          <FormIcon />
-          
-          {/* API Key */}
-          <div className="form-group">
-            <label htmlFor="apiKey" className="form-label">
-              API Key <span className="required">*</span>
-            </label>
-            <input
-              type="password"
-              id="apiKey"
-              name="apiKey"
-              value={formData.apiKey}
-              onChange={(e) => setFormData(prev => ({ ...prev, apiKey: e.target.value }))}
-              placeholder="Insira sua chave da API"
-              className="form-input"
-            />
-            {!formData.apiKey && (
-              <p className="form-help">Necessária para executar as análises.</p>
-            )}
-          </div>
+      {/* Global Loading Overlay */}
+      {isLoading && <LoadingOverlay />}
 
-          <TabContainer formData={formData} setFormData={setFormData} activeTab={activeTab} setActiveTab={setActiveTab} />
-          
-          <div className="button-section">
-            {activeTab === 'phenological' && (
-              <button 
-                onClick={handleGenerateDiagnosis} 
-                disabled={!isFormValid || isLoading} 
-                className={`action-button ${isFormValid && !isLoading ? 'primary' : 'disabled'}`}
-              >
-                {isLoading ? 'Processando...' : 'Gerar Diagnóstico Fenológico'}
-              </button>
-            )}
-            {activeTab === 'custom' && (
-              <button 
-                onClick={handleGenerateCustomAnalysis} 
-                disabled={!isCustomFormValid || isLoading} 
-                className={`action-button ${isCustomFormValid && !isLoading ? 'secondary' : 'disabled'}`}
-              >
-                {isLoading ? 'Processando...' : 'Gerar Análise Avulsa'}
-              </button>
-            )}
-          </div>
-
-          {error && (
-            <div className="error-message">
-              <p className="error-title">Ocorreu um Erro</p>
-              <p className="error-text">{error}</p>
-            </div>
-          )}
-
-          {/* Results Section in Sidebar */}
-          {analysisResult && (
-            <div className="results-section">
-              {/* Phenology Chart */}
-              {activeTab === 'phenological' && selectedCropData && (
-                <div className="result-card">
-                  <h3 className="result-title">Curva de Vida da Lavoura</h3>
-                  <p className="result-subtitle">NDVI Observado vs. Esperado</p>
-                  <div className="chart-container">
-                    <PhenologyChart apiResult={analysisResult.ndvi} phenologyData={selectedCropData} />
-                  </div>
-                </div>
-              )}
-
-              {/* Diagnostic Table */}
-              {activeTab === 'phenological' && selectedCropData && (
-                <div className="result-card">
-                  <h3 className="result-title">Tabela de Diagnóstico</h3>
-                  <DiagnosticTable analysisResult={analysisResult} phenologyData={selectedCropData} />
-                </div>
-              )}
-
-              {/* Custom Analysis Results */}
-              {activeTab === 'custom' && (
-                <div className="result-card">
-                  <CustomAnalysisResults analysisResult={analysisResult} />
-                </div>
-              )}
-            </div>
-          )}
-        </div>
-      </div>
-
-      {/* Right Side - Map */}
+      {/* Full Screen Map */}
       <div className="map-section">
-        {/* Map Header */}
-        <div className="map-header">
-          <h4 className="map-title">Mapa interativo</h4>
-        </div>
-        
-        {/* Map Container */}
         <div className="map-container">
           <Map
             onPolygonCreated={handlePolygonCreated}
@@ -204,6 +83,49 @@ function App() {
           />
         </div>
       </div>
+
+      {/* Floating Control Panel */}
+      <ControlPanel
+        formData={formData}
+        setFormData={setFormData}
+        activeTab={activeTab}
+        setActiveTab={setActiveTab}
+        onGenerateDiagnosis={handleGenerateDiagnosis}
+        onGenerateCustom={handleGenerateCustomAnalysis}
+        isLoading={isLoading}
+        isFormValid={isFormValid}
+        isCustomFormValid={isCustomFormValid}
+        error={error}
+      />
+
+      {/* Diagnostic Dashboard Overlay */}
+      {analysisResult && activeTab === 'phenological' && selectedCropData && (
+        <DiagnosticDashboard
+          analysisResult={analysisResult}
+          phenologyData={selectedCropData}
+          formData={formData}
+          onClose={() => setAnalysisResult(null)}
+          polygon={drawnPolygon}
+        />
+      )}
+
+      {/* Custom Analysis Results Overlay (Simple Modal for now) */}
+      {analysisResult && activeTab === 'custom' && (
+        <div className="fixed inset-0 z-[1000] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+          <div className="bg-white rounded-xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto relative">
+            <button
+              onClick={() => setAnalysisResult(null)}
+              className="absolute top-4 right-4 p-2 bg-gray-100 rounded-full hover:bg-gray-200 transition-colors"
+            >
+              ✕
+            </button>
+            <div className="p-6">
+              <CustomAnalysisResults analysisResult={analysisResult} />
+            </div>
+          </div>
+        </div>
+      )}
+
     </div>
   );
 }

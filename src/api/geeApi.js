@@ -25,7 +25,7 @@ const getPolygonCentroid = (polygon) => {
   const centroid = coords.reduce((acc, coord) => {
     return [acc[0] + coord[0], acc[1] + coord[1]];
   }, [0, 0]);
-  
+
   const numPoints = coords.length;
   return [centroid[0] / numPoints, centroid[1] / numPoints];
 };
@@ -67,6 +67,7 @@ export const fetchAnalysis = async (analysisData) => {
     const combinedResult = {
       ndvi: ndviResponse.data,
       climate: climateResponse.data,
+      periods: periods, // Inclui os períodos calculados no resultado
     };
 
     console.log("✅ Sucesso! Resposta Combinada:", combinedResult);

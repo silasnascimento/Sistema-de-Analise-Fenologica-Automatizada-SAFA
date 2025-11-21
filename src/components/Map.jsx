@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { MapContainer, TileLayer, LayersControl, useMap } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
@@ -8,12 +8,12 @@ import { GeoSearchControl, OpenStreetMapProvider } from 'leaflet-geosearch';
 
 // Código de correção do ícone padrão
 let DefaultIcon = L.icon({
-    iconUrl: '/marker-icon.png',
-    shadowUrl: '/marker-shadow.png',
-    iconSize: [25, 41],
-    iconAnchor: [12, 41],
-    popupAnchor: [1, -34],
-    shadowSize: [41, 41]
+  iconUrl: '/marker-icon.png',
+  shadowUrl: '/marker-shadow.png',
+  iconSize: [25, 41],
+  iconAnchor: [12, 41],
+  popupAnchor: [1, -34],
+  shadowSize: [41, 41]
 });
 L.Marker.prototype.options.icon = DefaultIcon;
 
@@ -45,13 +45,27 @@ const DrawHandler = ({ onPolygonCreated, onPolygonEdited, onPolygonDeleted }) =>
     map.addLayer(drawnItemsRef.current);
     const drawControl = new L.Control.Draw({
       position: 'topright',
-      edit: { featureGroup: drawnItemsRef.current },
+      edit: {
+        featureGroup: drawnItemsRef.current,
+        remove: true
+      },
       draw: {
         polygon: {
           allowIntersection: false,
-          shapeOptions: { color: '#4CAF50' },
+          shapeOptions: {
+            color: '#4CAF50',
+            weight: 2,
+            fillOpacity: 0.2
+          },
+          // Reduzir complexidade durante o desenho
+          showArea: false,
+          metric: false
         },
-        polyline: false, rectangle: false, circle: false, marker: false, circlemarker: false,
+        polyline: false,
+        rectangle: false,
+        circle: false,
+        marker: false,
+        circlemarker: false,
       },
     });
     map.addControl(drawControl);
@@ -83,9 +97,9 @@ const DrawHandler = ({ onPolygonCreated, onPolygonEdited, onPolygonDeleted }) =>
 };
 
 // O componente Map agora recebe os resultados da análise
-const Map = ({ onPolygonCreated, onPolygonEdited, onPolygonDeleted, analysisResult, phenologyData, activeTab }) => {
+const Map = React.memo(({ onPolygonCreated, onPolygonEdited, onPolygonDeleted, analysisResult, phenologyData, activeTab }) => {
   const position = [-27.7801, -52.9292];
-  
+
   // Normaliza diferentes formatos de tiles vindos da API
   const getTilesData = () => {
     if (!analysisResult || !analysisResult.ndvi) return null;
@@ -115,24 +129,49 @@ const Map = ({ onPolygonCreated, onPolygonEdited, onPolygonDeleted, analysisResu
   };
 
   return (
-    <MapContainer 
-      center={position} 
-      zoom={10} 
-      style={{ height: '100%', width: '100%' }} 
+    <MapContainer
+      center={position}
+      zoom={10}
+      style={{ height: '100%', width: '100%' }}
       className="h-full w-full"
+      zoomAnimation={true}
+      zoomAnimationThreshold={4}
+      fadeAnimation={true}
+      markerZoomAnimation={true}
+      preferCanvas={true}
     >
       <LayersControl position="topright">
-        <LayersControl.BaseLayer checked name="Mapa Escuro (CartoDB)">
-          <TileLayer url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png" attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>' />
+        <LayersControl.BaseLayer name="Mapa Escuro (CartoDB)">
+          <TileLayer
+            url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
+            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
+            updateWhenZooming={false}
+            keepBuffer={2}
+          />
         </LayersControl.BaseLayer>
         <LayersControl.BaseLayer name="Mapa Claro (CartoDB)">
-          <TileLayer url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png" attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>' />
+          <TileLayer
+            url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
+            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
+            updateWhenZooming={false}
+            keepBuffer={2}
+          />
         </LayersControl.BaseLayer>
-        <LayersControl.BaseLayer name="Padrão (OpenStreetMap)">
-          <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors' />
+        <LayersControl.BaseLayer checked name="Padrão (OpenStreetMap)">
+          <TileLayer
+            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            updateWhenZooming={false}
+            keepBuffer={2}
+          />
         </LayersControl.BaseLayer>
         <LayersControl.BaseLayer name="Satélite (Esri)">
-          <TileLayer url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}" attribution='&copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community' />
+          <TileLayer
+            url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
+            attribution='&copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
+            updateWhenZooming={false}
+            keepBuffer={2}
+          />
         </LayersControl.BaseLayer>
 
         {(() => {
@@ -175,11 +214,6 @@ const Map = ({ onPolygonCreated, onPolygonEdited, onPolygonDeleted, analysisResu
                   detectRetina={false}
                   subdomains={[]}
                   errorTileUrl=""
-                  eventHandlers={{
-                    // Logs removidos para melhor performance
-                    // Descomente apenas se precisar debugar
-                    tileerror: (e) => console.error(`❌ Tile error for ${layerName}:`, e),
-                  }}
                 />
               </LayersControl.Overlay>
             );
@@ -196,6 +230,6 @@ const Map = ({ onPolygonCreated, onPolygonEdited, onPolygonDeleted, analysisResu
 
     </MapContainer>
   );
-};
+});
 
 export default Map;
