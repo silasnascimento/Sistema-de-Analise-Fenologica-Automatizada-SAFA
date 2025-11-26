@@ -7,13 +7,18 @@ const CustomAnalysisResults = ({ analysisResult }) => {
   const customPeriods = analysisResult.customPeriods || [];
 
   return (
-    <div className="mt-6">
+    // Adicionei isolation aqui para criar um contexto seguro para este bloco
+    <div className="mt-6" style={{ isolation: 'isolate' }}>
       <h3 className="text-lg font-semibold text-gray-800 mb-4">Resultados da Análise Avulsa</h3>
-      
+
       {/* Tabela de resultados */}
       <div className="overflow-x-auto mb-6">
-        <table className="min-w-full bg-white border border-gray-200">
-          <thead className="bg-gray-50">
+        <table
+          className="min-w-full bg-white border border-gray-200"
+          // --- CORREÇÃO 1: Força o fundo branco da tabela ---
+          style={{ backgroundColor: '#ffffff' }}
+        >
+          <thead className="bg-gray-50" style={{ backgroundColor: '#f9fafb' }}>
             <tr>
               <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Período</th>
               <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Data Início</th>
@@ -61,14 +66,21 @@ const CustomAnalysisResults = ({ analysisResult }) => {
       </div>
 
       {/* Gráfico simples de NDVI */}
-      <div className="bg-white p-4 rounded-lg shadow">
+      <div
+        className="bg-white p-4 rounded-lg shadow"
+        // --- CORREÇÃO 2: Força o fundo branco do card do gráfico ---
+        style={{
+          backgroundColor: '#ffffff',
+          position: 'relative',
+          zIndex: 1
+        }}
+      >
         <h4 className="text-md font-semibold text-gray-800 mb-3">Evolução do NDVI</h4>
         <div className="space-y-2">
           {periods.map((periodKey, index) => {
             const ndviData = analysisResult.ndvi.ndvi[periodKey];
             const observedNdvi = ndviData?.ndvi_mean;
-            const customPeriod = customPeriods[index];
-            
+
             if (observedNdvi === undefined) return null;
 
             const percentage = Math.min(observedNdvi * 100, 100);
@@ -80,7 +92,7 @@ const CustomAnalysisResults = ({ analysisResult }) => {
                   P{index + 1}
                 </div>
                 <div className="flex-1 bg-gray-200 rounded-full h-4">
-                  <div 
+                  <div
                     className={`h-4 rounded-full ${barColor} transition-all duration-300`}
                     style={{ width: `${percentage}%` }}
                   ></div>
