@@ -4,6 +4,7 @@
   "version": "0.0.0",
   "type": "module",
   "license": "MIT",
+  "homepage": "https://silasnascimento.github.io/Sistema-de-Analise-Fenologica-Automatizada-SAFA/",
   "scripts": {
     "dev": "vite --host",
     "build": "vite build",
